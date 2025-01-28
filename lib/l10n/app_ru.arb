@@ -1,0 +1,20 @@
+{
+  "@@locale": "ru",
+  "developed" : "Разработано",
+  "welcome_board_message1" : "Управление задачами и cписок дел",
+  "welcome_board_message2" : "Этот продуктивный инструмент разработан, чтобы помочь вам лучше управлять своими задачами удобно управлять проектами!",
+  "welcome_board_button_message" : "Приступить",
+  "password_hint_text" : "Введите пароль",
+  "forget_password_question_text" : "Забыли пароль?",
+  "login_text" : "Войти",
+  "sign_up_text" : "Зарегистрироваться",
+  "name_hint_text" : "Введите имя",
+  "policy_text_1" : "Соглашаюсь с ",
+  "policy_text_2" : "политикой обработки данных ",
+  "policy_text_3" : "и с ",
+  "policy_text_4" : "публичной офертой",
+  "welcome_message_home" : "Здравствуйте!",
+  "in_progress_text" : "В процессе",
+  "task_groups_text" : "Группы задач",
+  "place_image_text" : "Нажмите что б добавить фотографию"
+}

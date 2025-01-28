@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "developed" : "Developed by",
+  "welcome_board_message1" : "Task Management & To-Do List",
+  "welcome_board_message2" : "This productive tool is designed to help you better manage your task project-wise conveniently!",
+  "welcome_board_button_message" : "Let's start",
+  "password_hint_text" : "Enter password",
+  "forget_password_question_text" : "Forget password?",
+  "login_text" : "Login",
+  "sign_up_text" : "Sign up",
+  "name_hint_text" : "Enter name",
+  "policy_text_1" : "Agree with ",
+  "policy_text_2" : "data processing policy ",
+  "policy_text_3" : "and with ",
+  "policy_text_4" : "public offer",
+  "welcome_message_home" : "Hello!",
+  "in_progress_text" : "In progress",
+  "task_groups_text" : "Task Groups",
+  "place_image_text" : "Click to add image"
+}

@@ -1,0 +1,50 @@
+name: material_to_do
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  cupertino_icons: ^1.0.8
+  font_awesome_flutter: ^10.7.0
+  fluttertoast: ^8.2.8
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  dio: ^5.7.0
+  cached_network_image: ^3.4.1
+  modal_bottom_sheet: ^3.0.0
+  insta_image_viewer: ^1.0.4
+  flutter_svg: ^2.0.10+1
+  stylish_bottom_bar: ^1.1.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.1
+  flutter_test:
+    sdk: flutter
+
+flutter_launcher_icons:
+  image_path: "assets/icons/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios : true
+  adaptive_icon_background: "assets/icons/icon.png"
+  adaptive_icon_foreground: "assets/icons/icon.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/
+    - assets/images/
+    - assets/icons/

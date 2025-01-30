@@ -13,7 +13,6 @@ Future<void> main() async {
         MaterialApp(
           theme: ThemeData(
               colorScheme: ThemeData().colorScheme.copyWith(primary: const Color.fromRGBO(95, 51, 225, 1)),
-              fontFamily: 'Inter'
           ),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [

@@ -16,5 +16,24 @@
   "welcome_message_home" : "Hello!",
   "in_progress_text" : "In progress",
   "task_groups_text" : "Task Groups",
-  "place_image_text" : "Click to add image"
+  "place_image_text" : "Click to add image",
+
+  "user_screen_view_profile" : "View profile",
+  "user_screen_policy_and_privacy" : "Policy & Privacy",
+  "user_screen_logout" : "Logout",
+  "user_screen_logout_alert_title" : "Logout?",
+  "user_screen_logout_alert_subtitle" : "Are you sure you want to logout from system?",
+  "yes_string" : "Yes",
+  "no_string" : "No",
+  "policy_string" : "Policy",
+  "privacy_string" : "Privacy",
+  "policy_generated_string" : "1. General Provisions:\n1.1. This application is developed for educational purposes and is designed to demonstrate task management functionality.\n1.2. The app is not intended for commercial use.\n1.3. Users agree to use the application at their own risk.\n\n2. Functional Capabilities:\n2.1. Creating, editing, and deleting tasks.\n2.2. Grouping tasks by categories.\n2.3. Setting deadlines for tasks.\n2.4. User authentication using JWT tokens.\n\n3. Developers' Responsibility:\n3.1. Developers are not responsible for data loss resulting from testing or technical issues.\n3.2. All user-input data is not protected from leaks as the app is developed solely for educational purposes.\n\n4. Personal Data:\n4.1. As part of the training project, users' personal data may be used only for functionality testing.\n4.2. It is recommended to use test data instead of real information.\n\n5. Support:\n5.1. The application does not provide official support.\n5.2. All suggestions and feedback can be directed to the developers for educational purposes.",
+  "privacy_generated_string" : "1. General Provisions:\n1.1. This application is developed for educational purposes, and its functionality does not guarantee complete data protection.\n1.2. By using the application, you agree to the processing of the data you provide.\n\n2. Data Collection:\n2.1. The app collects minimal data, such as username, email address, and tasks.\n2.2. All data is voluntarily entered by the user.\n2.3. It is recommended to use test data instead of real personal information.\n\n3. Use of Data:\n3.1. Collected data is used solely to demonstrate the functionality of the application.\n3.2. Data is not shared with third parties and is not used for commercial purposes.\n\n4. Data Storage:\n4.1. All information is stored in a local database or on a development server, which may be unstable.\n4.2. Data may be deleted without notice during the development or testing process.\n\n5. Security:\n5.1. The application does not provide data encryption.\n5.2. User data may be subject to leaks, as the application is intended solely for educational purposes.\n\n6. Changes to the Privacy Policy:\n6.1. The privacy policy may be changed at any time without notice, as the application is still under development.",
+  "change_user_name_string" : "Change user name",
+  "change_user_image_string" : "Change avatar",
+  "hint_name_string" : "Please enter name...",
+  "save_string" : "Save",
+  "not_choosen_image" : "We cant get image from gallery...",
+  "add_image_string" : "Add image",
+  "max_capacity_image_string" : "Not more then 12Mb"
 }

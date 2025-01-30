@@ -19,6 +19,7 @@ dependencies:
   insta_image_viewer: ^1.0.4
   flutter_svg: ^2.0.10+1
   stylish_bottom_bar: ^1.1.0
+  image_picker: ^1.1.2
   flutter:
     sdk: flutter
   flutter_localizations:

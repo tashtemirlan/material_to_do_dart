@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
@@ -12,6 +11,8 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:material_to_do/ui_folder/skeleton_folder/skeleton.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
+import '../user/user_change_avatar_bottom_sheet.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -354,130 +355,6 @@ class UserScreenState extends State<UserScreen>{
 
   // TODO : write as a stateful widget this and take as a child inside model bottom sheet = >
 
-  Future<void> _pickImages(
-      Function setState,
-      ValueSetter<XFile?> onImageSelected,
-      ValueSetter<FileImage?> onImageDisplay
-      ) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File userSelectedFile = File(pickedFile.path);
-      if (userSelectedFile.lengthSync() <= 12 * 1024 * 1024) {
-        setState(() {
-          onImageSelected(pickedFile); // Updates XFile variable
-          onImageDisplay(FileImage(userSelectedFile)); // Updates FileImage for UI
-        });
-        print("User successfully selected an image");
-      }
-    } else {
-      Fluttertoast.showToast(
-        msg: AppLocalizations.of(context)!.not_choosen_image,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.white,
-        textColor: Colors.black,
-        fontSize: 12.0,
-      );
-    }
-  }
-
-  Widget showChoseImage(width, userChooseImage) {
-    return SizedBox(
-      width: width,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: InstaImageViewer(child: Image(image: userChooseImage, fit: BoxFit.cover,)),
-      ),
-    );
-  }
-
-  Widget uploadImagesContainer(
-      double width,
-      double height,
-      XFile? imageFile,
-      FileImage? userChooseImage,
-      Function setState
-      ) {
-    return GestureDetector(
-      onTap: () {
-        _pickImages(
-          setState,
-              (XFile? newFile) {
-            setState(() {
-              imageFile = newFile;
-            });
-          },
-              (FileImage? newImage) {
-            setState(() {
-              userChooseImage = newImage;
-            });
-          },
-        );
-      },
-      child: imageFile != null
-          ? ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Image.file(
-          File(imageFile.path),
-          width: width * 0.95,
-          height: height * 0.4,
-          fit: BoxFit.cover,
-        ),
-      )
-          : Container(
-        width: width * 0.95,
-        height: height * 0.4,
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(245, 245, 245, 1),
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: const Color.fromRGBO(221, 221, 221, 1),
-            width: 1.0,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const FaIcon(
-                FontAwesomeIcons.cameraRetro,
-                color: Color.fromRGBO(77, 170, 232, 1),
-                size: 30,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                AppLocalizations.of(context)!.add_image_string,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  letterSpacing: 0.2,
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                AppLocalizations.of(context)!.max_capacity_image_string,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color.fromRGBO(154, 154, 154, 1),
-                  fontSize: 12,
-                  letterSpacing: 0.2,
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.none,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void changeUserImageBottomSheet(String imagePath) {
     showCupertinoModalBottomSheet<bool>(
       topRadius: const Radius.circular(40),
@@ -485,104 +362,7 @@ class UserScreenState extends State<UserScreen>{
       context: context,
       expand: true,
       builder: (BuildContext context) {
-        double width = MediaQuery.of(context).size.width;
-        double height = MediaQuery.of(context).size.height;
-        return StatefulBuilder(
-          builder: (context, setState) {
-            XFile? imageFile;
-            FileImage? userChooseImage;
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                      width: width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.change_user_image_string,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 24,
-                              letterSpacing: 0.01,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: Colors.grey.shade200,
-                              radius: 20,
-                              child: const Icon(
-                                FontAwesomeIcons.xmark,
-                                size: 24,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: width,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15)
-                      ),
-                      child: CachedNetworkImage(
-                        progressIndicatorBuilder: (context, url, downloadProgress){
-                          return Center(
-                            child: Container(
-                              width: width,
-                              height: height/3,
-                              color: Colors.grey.shade200,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: SizedBox(
-                                  width: 48,
-                                  height: 48,
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        imageUrl: imagePath,
-                        imageBuilder: (context, imageProvider){
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: InstaImageViewer(child: Image(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                              filterQuality: FilterQuality.high,
-                            ),),
-                          );
-                        },
-                        errorWidget: (context, url, error) => Skeleton(
-                          width: width,
-                          height: height/3,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    uploadImagesContainer(width, height, imageFile, userChooseImage, setState)
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+        return UserChangeAvatarBottomSheet(imagePath: imagePath,);
       },
     );
   }
@@ -786,64 +566,68 @@ class UserScreenState extends State<UserScreen>{
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    double statusBarHeight = MediaQuery.of(context).padding.top;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
         width: width,
         height: height,
         color: colors.scaffoldColor,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.zero,
-          physics: BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 15,),
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.shade500
-                  ),
+        child: Padding(
+            padding: EdgeInsets.only(top: statusBarHeight),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 15,),
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade500
+                      ),
+                    ),
+                    const SizedBox(height: 15,),
+                    Text("User name here"),
+                    const SizedBox(height: 30,),
+                    GestureDetector(
+                      onTap: showUserBottomSheetData,
+                      child: chevronSelectContainer(
+                          width: width,
+                          textMain: AppLocalizations.of(context)!.user_screen_view_profile
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    GestureDetector(
+                      onTap: showPolicyAndPrivacyBottomSheetData,
+                      child: chevronSelectContainer(
+                          width: width,
+                          textMain: AppLocalizations.of(context)!.user_screen_policy_and_privacy
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    GestureDetector(
+                      onTap: () async{
+                        await logoutUser();
+                      },
+                      child: chevronSelectContainer(
+                          width: width,
+                          textMain: AppLocalizations.of(context)!.user_screen_logout,
+                          colorBorder: Colors.red.shade300,
+                          colorText: Colors.red.shade500
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 15,),
-                Text("User name here"),
-                const SizedBox(height: 30,),
-                GestureDetector(
-                  onTap: showUserBottomSheetData,
-                  child: chevronSelectContainer(
-                      width: width,
-                      textMain: AppLocalizations.of(context)!.user_screen_view_profile
-                  ),
-                ),
-                const SizedBox(height: 10,),
-                GestureDetector(
-                  onTap: showPolicyAndPrivacyBottomSheetData,
-                  child: chevronSelectContainer(
-                      width: width,
-                      textMain: AppLocalizations.of(context)!.user_screen_policy_and_privacy
-                  ),
-                ),
-                const SizedBox(height: 10,),
-                GestureDetector(
-                  onTap: () async{
-                    await logoutUser();
-                  },
-                  child: chevronSelectContainer(
-                    width: width,
-                    textMain: AppLocalizations.of(context)!.user_screen_logout,
-                    colorBorder: Colors.red.shade300,
-                    colorText: Colors.red.shade500
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
+        )
       ),
     );
   }

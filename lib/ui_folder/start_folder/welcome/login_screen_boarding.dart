@@ -143,8 +143,13 @@ class LoginPageState extends State<LoginPage> {
           ),
         ),
         style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
-        validator: (String?value){
-          if(value!.isEmpty || value.length<8){
+        onChanged: (value){
+          setState(() {
+
+          });
+        },
+        validator: (String? value){
+          if(value!.length <8){
             return "";
           }
           return null;
@@ -174,7 +179,7 @@ class LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
-                backgroundColor: (emailController.text.isNotEmpty && passwordController.text.isNotEmpty)?
+                backgroundColor: (emailController.text.length>=5 && passwordController.text.length>=8)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
                 WidgetStateProperty.all<Color>(colors.mainColor.withOpacity(0.3))

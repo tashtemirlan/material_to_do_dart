@@ -6,10 +6,7 @@ import 'package:material_to_do/ui_folder/bottom_navigation_folder/create_task_sc
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/home_screen.dart';
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/notes_screen.dart';
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/user_screen.dart';
-import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
-
 import 'package:material_to_do/global_folder/colors.dart' as colors;
-
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -18,10 +15,29 @@ class BottomNavBar extends StatefulWidget {
   BottomNavBarState createState() => BottomNavBarState();
 }
 
-class BottomNavBarState extends State<BottomNavBar>{
+class BottomNavBarState extends State<BottomNavBar> {
   int selected = 0;
-  bool heart = false;
-  final controller = PageController();
+  final PageController controller = PageController();
+
+  Widget navBarItem(int index, IconData icon, double width) {
+    return GestureDetector(
+      onTap: (){
+        onItemTapped(index);
+      },
+      child: SizedBox(
+        width: (width-32)/5,
+        height: 32,
+        child: Align(
+          alignment: Alignment.center,
+          child: FaIcon(
+            icon,
+            color: selected == index ? colors.mainColor : colors.mainColor.withValues(alpha: 0.5),
+            size: 28,
+          ),
+        )
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -29,91 +45,63 @@ class BottomNavBarState extends State<BottomNavBar>{
     super.dispose();
   }
 
+  void onItemTapped(int index) {
+    if (index == selected) return;
+    controller.jumpToPage(index);
+    setState(() {
+      selected = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: StylishBottomBar(
-        option: AnimatedBarOptions(
-          iconSize: 22,
-          iconStyle: IconStyle.animated
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(), // Creates a notch for the FAB
+        notchMargin: 10.0, // Space between the FAB and the notch
+        color: colors.mainColor.withValues(alpha: 0.25),
+        height: 50,
+        child: SizedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              navBarItem(0, FontAwesomeIcons.house, width),
+              navBarItem(1, FontAwesomeIcons.calendar, width),
+              const SizedBox(width: 70),
+              navBarItem(2, FontAwesomeIcons.noteSticky, width),
+              navBarItem(3, FontAwesomeIcons.userSecret, width),
+            ],
+          ),
         ),
-        items: [
-          BottomBarItem(
-            icon: const FaIcon(
-              FontAwesomeIcons.house,
-            ),
-            selectedIcon: const FaIcon(FontAwesomeIcons.house),
-            selectedColor: colors.mainColor,
-            unSelectedColor: Colors.grey,
-            showBadge: false,
-            title: Text(""),
-          ),
-          BottomBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(right: 15),
-              child: const FaIcon(FontAwesomeIcons.calendar),
-            ),
-            selectedIcon: const FaIcon(FontAwesomeIcons.calendar),
-            selectedColor: colors.mainColor,
-            unSelectedColor: Colors.grey,
-            title: const Text(""),
-          ),
-          BottomBarItem(
-            icon: Padding(
-                padding: EdgeInsets.only(left: 15),
-                child: const FaIcon(FontAwesomeIcons.noteSticky),
-            ),
-            selectedIcon: const FaIcon(FontAwesomeIcons.noteSticky),
-            selectedColor: colors.mainColor,
-            unSelectedColor: Colors.grey,
-            title: const Text(""),
-          ),
-          BottomBarItem(
-            icon: const FaIcon(FontAwesomeIcons.userSecret),
-            selectedIcon: const FaIcon(FontAwesomeIcons.userSecret),
-            selectedColor: colors.mainColor,
-            unSelectedColor: Colors.grey,
-            title: const Text(""),
-          ),
-        ],
-        hasNotch: true,
-        fabLocation: StylishBarFabLocation.center,
-        currentIndex: selected,
-        notchStyle: NotchStyle.circle,
-        onTap: (index) {
-          if (index == selected) return;
-          controller.jumpToPage(index);
-          setState(() {
-            selected = index;
-          });
-        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print("Create note");
-          Navigator.of(context).pushReplacement(CupertinoPageRoute(
-            builder: (BuildContext context) => const CreateTaskScreen(),
-          ));
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(builder: (BuildContext context) => const CreateTaskScreen()),
+          );
         },
         backgroundColor: colors.mainColor,
-        shape: CircleBorder(),
-        child: const FaIcon(FontAwesomeIcons.plus, color: Colors.white,),
+        shape: const CircleBorder(),
+        child: const FaIcon(FontAwesomeIcons.plus, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: SafeArea(
-        child: PageView(
-          controller: controller,
-          children: const [
-            HomeScreen(),
-            CalendarScreen(),
-            NotesScreen(),
-            UserScreen(),
-          ],
-        ),
+      body: PageView(
+        controller: controller,
+        onPageChanged: (index) {
+          setState(() {
+            selected = index;
+          });
+        },
+        children: const [
+          HomeScreen(),
+          CalendarScreen(),
+          NotesScreen(),
+          UserScreen(),
+        ],
       ),
     );
   }
-  
 }

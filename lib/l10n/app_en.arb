@@ -35,5 +35,17 @@
   "save_string" : "Save",
   "not_choosen_image" : "We cant get image from gallery...",
   "add_image_string" : "Add image",
-  "max_capacity_image_string" : "Not more then 12Mb"
+  "max_capacity_image_string" : "Not more then 12Mb",
+  "month_1": "January",
+  "month_2": "February",
+  "month_3": "March",
+  "month_4": "April",
+  "month_5": "May",
+  "month_6": "June",
+  "month_7": "July",
+  "month_8": "August",
+  "month_9": "September",
+  "month_10": "October",
+  "month_11": "November",
+  "month_12": "December"
 }

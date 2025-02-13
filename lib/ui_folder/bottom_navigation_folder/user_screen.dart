@@ -1,14 +1,9 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
-import 'package:material_to_do/ui_folder/skeleton_folder/skeleton.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -36,15 +31,15 @@ class UserScreenState extends State<UserScreen>{
           ),
           title: Text(
               AppLocalizations.of(context)!.user_screen_logout_alert_title , textAlign: TextAlign.center,
-              style: TextStyle(
+              style: GoogleFonts.roboto(textStyle: TextStyle(
                   fontSize: 24, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
-              )
+              ))
           ),
           content: Text(
               AppLocalizations.of(context)!.user_screen_logout_alert_subtitle ,  textAlign: TextAlign.start,
-              style: TextStyle(
+              style:  GoogleFonts.roboto(textStyle: TextStyle(
                   fontSize: 14, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
-              )
+              ))
           ),
           actionsPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
           actions: [
@@ -76,9 +71,9 @@ class UserScreenState extends State<UserScreen>{
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                         child: Text(
                             AppLocalizations.of(context)!.yes_string,
-                            style: TextStyle(
+                            style: GoogleFonts.roboto(textStyle:  TextStyle(
                                 fontSize: 14, color: colors.errorTextFormFieldColor, fontWeight: FontWeight.w500 , letterSpacing: 0.1
-                            )
+                            ))
                         ),
                       )
                   )
@@ -114,13 +109,13 @@ class UserScreenState extends State<UserScreen>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(textMain ?? "",
-              style: TextStyle(
+              style: GoogleFonts.roboto(textStyle: TextStyle(
                 fontSize: 16,
                 color: colorText ?? Colors.black,
                 decoration: TextDecoration.none,
                 fontWeight: FontWeight.w500
               ),
-            ),
+            )),
             FaIcon(FontAwesomeIcons.chevronRight, color: colorBorder ?? Colors.black, size: 18,)
           ],
         ),
@@ -168,11 +163,11 @@ class UserScreenState extends State<UserScreen>{
                 const SizedBox(height: 15,),
                 Text(
                   "User name here",
-                  style: TextStyle(
+                  style: GoogleFonts.roboto( textStyle: TextStyle(
                       color: Colors.black,
                       decoration: TextDecoration.none,
                       fontWeight: FontWeight.w600
-                  ),
+                  )),
                 ),
                 const SizedBox(height: 20,),
                 GestureDetector(
@@ -237,7 +232,7 @@ class UserScreenState extends State<UserScreen>{
                 :
             Padding(padding: const EdgeInsets.only(top: 10), child: FaIcon(FontAwesomeIcons.circleExclamation, color: colors.errorTextFormFieldColor, size: 24,),)
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 2){
             return "";
@@ -286,9 +281,9 @@ class UserScreenState extends State<UserScreen>{
               child: Text(
                   AppLocalizations.of(context)!.save_string,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
-                  )),
+                  ))),
             )
         )
     );
@@ -317,13 +312,13 @@ class UserScreenState extends State<UserScreen>{
                         children: [
                           Text(
                             AppLocalizations.of(context)!.change_user_name_string,
-                            style: TextStyle(
+                            style: GoogleFonts.roboto(textStyle: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 24,
                                 letterSpacing: 0.01,
                                 decoration: TextDecoration.none
-                            ),
+                            )),
                           ),
                           GestureDetector(
                             onTap: (){
@@ -391,13 +386,13 @@ class UserScreenState extends State<UserScreen>{
                     children: [
                       Text(
                         AppLocalizations.of(context)!.user_screen_policy_and_privacy,
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w800,
                             fontSize: 24,
                             letterSpacing: 0.01,
                             decoration: TextDecoration.none
-                        ),
+                        )),
                       ),
                       GestureDetector(
                         onTap: (){
@@ -429,11 +424,11 @@ class UserScreenState extends State<UserScreen>{
                       child: Center(
                         child: Text(
                           AppLocalizations.of(context)!.policy_string,
-                          style: TextStyle(
+                          style: GoogleFonts.roboto( textStyle: TextStyle(
                               decoration: TextDecoration.none,
                               color: Colors.black, fontSize: 16,
                               fontWeight: FontWeight.w500
-                          ),
+                          )),
                         ),
                       ),
                     ),
@@ -456,11 +451,11 @@ class UserScreenState extends State<UserScreen>{
                       child: Center(
                         child: Text(
                           AppLocalizations.of(context)!.privacy_string,
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
                               decoration: TextDecoration.none,
                               color: Colors.black, fontSize: 16,
                               fontWeight: FontWeight.w500
-                          ),
+                          )),
                         ),
                       ),
                     ),
@@ -489,20 +484,20 @@ class UserScreenState extends State<UserScreen>{
               children: [
                 Text(
                   AppLocalizations.of(context)!.policy_string,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
                       decoration: TextDecoration.none,
                       color: Colors.black, fontSize: 24,
                       fontWeight: FontWeight.w600
-                  ),
+                  )),
                 ),
                 const SizedBox(height: 15,),
                 Text(
                   AppLocalizations.of(context)!.policy_generated_string,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
                       decoration: TextDecoration.none,
                       color: Colors.black, fontSize: 16,
                       fontWeight: FontWeight.w500
-                  ),
+                  )),
                 ),
               ],
             ),
@@ -527,20 +522,20 @@ class UserScreenState extends State<UserScreen>{
               children: [
                 Text(
                   AppLocalizations.of(context)!.privacy_string,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
                       decoration: TextDecoration.none,
                       color: Colors.black, fontSize: 24,
                       fontWeight: FontWeight.w600
-                  ),
+                  )),
                 ),
                 const SizedBox(height: 15,),
                 Text(
                   AppLocalizations.of(context)!.privacy_generated_string,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
                       decoration: TextDecoration.none,
                       color: Colors.black, fontSize: 16,
                       fontWeight: FontWeight.w500
-                  ),
+                  )),
                 )
               ],
             ),
@@ -594,7 +589,7 @@ class UserScreenState extends State<UserScreen>{
                       ),
                     ),
                     const SizedBox(height: 15,),
-                    Text("User name here"),
+                    Text("User name here", style: GoogleFonts.roboto(textStyle: TextStyle()),),
                     const SizedBox(height: 30,),
                     GestureDetector(
                       onTap: showUserBottomSheetData,

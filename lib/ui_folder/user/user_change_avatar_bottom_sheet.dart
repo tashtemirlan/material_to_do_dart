@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
@@ -116,25 +117,25 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
               Text(
                 AppLocalizations.of(context)!.add_image_string,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: GoogleFonts.roboto(textStyle: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
                   letterSpacing: 0.2,
                   fontWeight: FontWeight.w400,
                   decoration: TextDecoration.none,
-                ),
+                )),
               ),
               const SizedBox(height: 5),
               Text(
                 AppLocalizations.of(context)!.max_capacity_image_string,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: GoogleFonts.roboto(textStyle:  const TextStyle(
                   color: Color.fromRGBO(154, 154, 154, 1),
                   fontSize: 12,
                   letterSpacing: 0.2,
                   fontWeight: FontWeight.w400,
                   decoration: TextDecoration.none,
-                ),
+                )),
               )
             ],
           ),
@@ -168,9 +169,9 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
               child: Text(
                   AppLocalizations.of(context)!.save_string,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
-                  )),
+                  ))),
             )
         )
     );
@@ -200,13 +201,13 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
                 children: [
                   Text(
                     AppLocalizations.of(context)!.change_user_image_string,
-                    style: const TextStyle(
+                    style: GoogleFonts.roboto(textStyle:  const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w800,
                       fontSize: 24,
                       letterSpacing: 0.01,
                       decoration: TextDecoration.none,
-                    ),
+                    )),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -275,7 +276,6 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
             const SizedBox(height: 20),
             uploadImagesContainer(width, height),
             const SizedBox(height: 20,),
-
           ],
         ),
       ),

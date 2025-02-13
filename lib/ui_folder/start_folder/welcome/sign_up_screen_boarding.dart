@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:material_to_do/ui_folder/start_folder/welcome/login_screen_boarding.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -85,7 +86,7 @@ class SignUpPageState extends State<SignUpPage> {
                 :
             Padding(padding: const EdgeInsets.only(top: 10), child: FaIcon(FontAwesomeIcons.circleExclamation, color: colors.errorTextFormFieldColor, size: 24,),)
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 2){
             return "";
@@ -149,7 +150,7 @@ class SignUpPageState extends State<SignUpPage> {
                 :
             Padding(padding: const EdgeInsets.only(top: 10), child: FaIcon(FontAwesomeIcons.circleExclamation, color: colors.errorTextFormFieldColor, size: 24,),)
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 2){
             return "";
@@ -228,7 +229,7 @@ class SignUpPageState extends State<SignUpPage> {
             ),
           ),
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.isEmpty || value.length<8){
             return "";
@@ -257,9 +258,9 @@ class SignUpPageState extends State<SignUpPage> {
           alignment: Alignment.center,
           child: Text(
               AppLocalizations.of(context)!.place_image_text, textAlign: TextAlign.center,
-              style: TextStyle(
+              style: GoogleFonts.roboto(textStyle: TextStyle(
                   fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
-              )),
+              ))),
         ),
       ),
     );
@@ -297,9 +298,9 @@ class SignUpPageState extends State<SignUpPage> {
               child: Text(
                   AppLocalizations.of(context)!.sign_up_text,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
-                  )),
+                  ))),
             )
         )
     );
@@ -433,12 +434,12 @@ class SignUpPageState extends State<SignUpPage> {
                                       width: width,
                                       child: Text(
                                           AppLocalizations.of(context)!.sign_up_text, textAlign: TextAlign.start,
-                                          style: TextStyle(
+                                          style: GoogleFonts.roboto(textStyle: TextStyle(
                                             fontSize: 32,
                                             fontWeight: FontWeight.w800,
                                             letterSpacing: 0.01,
                                             color: colors.darkBlack,
-                                          ))
+                                          )))
                                   ),
                                   const SizedBox(height: 40),
                                   placeImage(width),
@@ -461,9 +462,9 @@ class SignUpPageState extends State<SignUpPage> {
                                           padding: const EdgeInsets.only(right: 6),
                                           child: Text(
                                               AppLocalizations.of(context)!.login_text, textAlign: TextAlign.center,
-                                              style: TextStyle(
+                                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                                   fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
-                                              )),
+                                              ))),
                                         )
                                     ),
                                   )
@@ -489,10 +490,10 @@ class SignUpPageState extends State<SignUpPage> {
                                         textAlign: TextAlign.left,
                                         text: TextSpan(
                                             text: AppLocalizations.of(context)!.policy_text_1,
-                                            style: TextStyle(fontSize: 16 ,
+                                            style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 ,
                                                 color: colors.pureDarkColor,
                                                 fontWeight: FontWeight.w500
-                                            ),
+                                            )),
                                             children: <TextSpan>[
                                               TextSpan(
                                                   text:  AppLocalizations.of(context)!.policy_text_2,
@@ -500,18 +501,18 @@ class SignUpPageState extends State<SignUpPage> {
                                                     ..onTap = () {
                                                       print("Policy1");
                                                     },
-                                                  style: TextStyle(fontSize: 16,
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
                                                       color: colors.mainColor,
                                                       fontWeight: FontWeight.w500,
                                                       decoration: TextDecoration.underline
-                                                  )
+                                                  ))
                                               ),
                                               TextSpan(
                                                   text:  AppLocalizations.of(context)!.policy_text_3,
-                                                  style: TextStyle(fontSize: 16,
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
                                                       color: colors.pureDarkColor,
                                                       fontWeight: FontWeight.w500
-                                                  )
+                                                  ))
                                               ),
                                               TextSpan(
                                                   text:  AppLocalizations.of(context)!.policy_text_4,
@@ -519,11 +520,11 @@ class SignUpPageState extends State<SignUpPage> {
                                                     ..onTap = () {
                                                       print("policy2");
                                                     },
-                                                  style: TextStyle(fontSize: 16,
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
                                                       color: colors.mainColor,
                                                       fontWeight: FontWeight.w500,
                                                       decoration: TextDecoration.underline
-                                                  )
+                                                  ))
                                               ),
                                             ]
                                         ),

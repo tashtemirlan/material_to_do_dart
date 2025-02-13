@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -66,7 +67,7 @@ class LoginPageState extends State<LoginPage> {
             Padding(padding: const EdgeInsets.only(top: 10), child: FaIcon(FontAwesomeIcons.circleExclamation, color: colors.errorTextFormFieldColor, size: 24,),)
 
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 5){
             return "";
@@ -142,7 +143,7 @@ class LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        style: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack),
+        style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         onChanged: (value){
           setState(() {
 
@@ -189,9 +190,9 @@ class LoginPageState extends State<LoginPage> {
               child: Text(
                   AppLocalizations.of(context)!.login_text,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
-                  )),
+                  ))),
             )
         )
     );
@@ -270,9 +271,9 @@ class LoginPageState extends State<LoginPage> {
                                           padding: const EdgeInsets.only(right: 6),
                                           child: Text(
                                               AppLocalizations.of(context)!.forget_password_question_text, textAlign: TextAlign.end,
-                                              style: TextStyle(
+                                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                                   fontSize: 16, color: colors.mainColor, fontWeight: FontWeight.w500
-                                              )),
+                                              ))),
                                         )
                                     ),
                                   ),
@@ -289,9 +290,9 @@ class LoginPageState extends State<LoginPage> {
                                           padding: const EdgeInsets.only(right: 6),
                                           child: Text(
                                               AppLocalizations.of(context)!.sign_up_text, textAlign: TextAlign.center,
-                                              style: TextStyle(
+                                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                                   fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
-                                              )),
+                                              ))),
                                         )
                                     ),
                                   )

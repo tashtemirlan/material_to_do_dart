@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,17 +61,17 @@ class WelcomeScreenBoardingState extends State<WelcomeScreenBoarding>{
                   Text(
                       AppLocalizations.of(context)!.welcome_board_message1,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.roboto(textStyle: TextStyle(
                         fontSize: 32, color: colors.black1, fontWeight: FontWeight.w600,
-                      )
+                      ))
                   ),
                   const SizedBox(height: 10,),
                   Text(
                       AppLocalizations.of(context)!.welcome_board_message2,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.roboto(textStyle: TextStyle(
                         fontSize: 16, color: colors.black2, fontWeight: FontWeight.w600,
-                      )
+                      ))
                   ),
                   const SizedBox(height: 10,),
                   Spacer(),
@@ -95,9 +96,9 @@ class WelcomeScreenBoardingState extends State<WelcomeScreenBoarding>{
                             Text(
                                 AppLocalizations.of(context)!.welcome_board_button_message,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
                                   fontSize: 26, color: Colors.white, fontWeight: FontWeight.w600,
-                                )
+                                ))
                             ),
                             Spacer(),
                             SvgPicture.asset(

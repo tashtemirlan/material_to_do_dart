@@ -18,8 +18,8 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   insta_image_viewer: ^1.0.4
   flutter_svg: ^2.0.10+1
-  stylish_bottom_bar: ^1.1.0
   image_picker: ^1.1.2
+  google_fonts: ^6.2.1
   flutter:
     sdk: flutter
   flutter_localizations:

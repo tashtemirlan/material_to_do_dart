@@ -8,6 +8,8 @@ import 'package:material_to_do/ui_folder/bottom_navigation_folder/notes_screen.d
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/user_screen.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 
+import '../../global_folder/globals.dart';
+
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
@@ -31,7 +33,7 @@ class BottomNavBarState extends State<BottomNavBar> {
           alignment: Alignment.center,
           child: FaIcon(
             icon,
-            color: selected == index ? colors.mainColor : colors.mainColor.withValues(alpha: 0.5),
+            color: selected == index ? colors.scaffoldColor : colors.mainColor.withAlpha(100),
             size: 28,
           ),
         )
@@ -61,8 +63,8 @@ class BottomNavBarState extends State<BottomNavBar> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(), // Creates a notch for the FAB
         notchMargin: 10.0, // Space between the FAB and the notch
-        color: colors.mainColor.withValues(alpha: 0.25),
-        height: 50,
+        color: colors.palete8,
+        height: bottomNavBarHeight,
         child: SizedBox(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,

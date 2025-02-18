@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
-import 'package:material_to_do/ui_folder/start_folder/welcome/login_screen_boarding.dart';
+import 'package:material_to_do/ui_folder/start_folder/login_folder/login_screen_boarding.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
@@ -89,7 +89,7 @@ class SignUpPageState extends State<SignUpPage> {
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 2){
-            return "";
+            return "${AppLocalizations.of(context)!.field_less_then}2";
           }
           return null;
         },
@@ -153,7 +153,7 @@ class SignUpPageState extends State<SignUpPage> {
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 2){
-            return "";
+            return "${AppLocalizations.of(context)!.field_less_then}2";
           }
           return null;
         },
@@ -232,7 +232,7 @@ class SignUpPageState extends State<SignUpPage> {
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.isEmpty || value.length<8){
-            return "";
+            return "${AppLocalizations.of(context)!.field_less_then}8";
           }
           return null;
         },

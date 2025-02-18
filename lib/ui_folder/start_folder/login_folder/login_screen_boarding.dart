@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/bottom_navigation_screen.dart';
-import 'package:material_to_do/ui_folder/start_folder/welcome/sign_up_screen_boarding.dart';
+import 'package:material_to_do/ui_folder/start_folder/login_folder/forget_password_folder/forget_password_email_screen.dart';
+import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/sign_up_screen_boarding.dart';
 
 
 class LoginPage extends StatefulWidget{
@@ -70,7 +71,7 @@ class LoginPageState extends State<LoginPage> {
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
           if(value!.length < 5){
-            return "";
+            return "${AppLocalizations.of(context)!.field_less_then}5";
           }
           return null;
         },
@@ -151,7 +152,7 @@ class LoginPageState extends State<LoginPage> {
         },
         validator: (String? value){
           if(value!.length <8){
-            return "";
+            return "${AppLocalizations.of(context)!.field_less_then}8";
           }
           return null;
         },
@@ -263,7 +264,8 @@ class LoginPageState extends State<LoginPage> {
                                   const SizedBox(height: 16),
                                   GestureDetector(
                                     onTap: (){
-                                      print("Forget password");
+                                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                          builder: (BuildContext context) => const ForgetPasswordEmailScreen()));
                                     },
                                     child: SizedBox(
                                         width: width,

@@ -7,7 +7,7 @@ import 'package:hive_flutter/adapters.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_to_do/ui_folder/start_folder/welcome/welcome_screen_boarding.dart';
+import 'package:material_to_do/ui_folder/start_folder/welcome_screen_boarding.dart';
 
 
 class SplashScreen extends StatefulWidget{

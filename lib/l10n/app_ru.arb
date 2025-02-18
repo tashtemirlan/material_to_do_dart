@@ -35,6 +35,26 @@
   "save_string" : "Сохранить",
   "not_choosen_image" : "Мы не смогли получить изображение\nз галереи",
   "add_image_string" : "Добавить изображение",
-  "max_capacity_image_string" : "Не больше 12Mb"
+  "max_capacity_image_string" : "Не больше 12Mb",
 
+  "forget_password_string" : "Забыли пароль?",
+  "send_please_email_string" : "Введите свой адрес электронной почты, чтобы отправить код подтверждения для сброса пароля.",
+  "email_address_string" : "Эл. почта",
+  "empty_field_string" : "Поле пустое!",
+  "send_string": "Отправить",
+  "field_less_then" : "Длина поля меньше кол-во символов : ",
+
+  "enter_code_string" : "Введите код",
+  "code_accept_string" : "Код подтверждения",
+  "continue_string" : "Продолжить",
+  "get_new_code" : "Получить новый код",
+  "new_code_send" : "Новый код отправлен!",
+
+  "create_password_string" : "Создайте пароль",
+  "enter_password_string" : "Введите пароль",
+  "retry_enter_password_string" : "Повторно введите пароль",
+  "passwords_not_match" : "Пароли не совпадают!",
+
+  "password_successfully_reset" : "Пароль успешно сброшен!",
+  "password_reset_description_string" : "Теперь вы можете войти в свой аккаунт с использованием нового пароля."
 }

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_to_do/ui_folder/start_folder/welcome/login_screen_boarding.dart';
+import 'package:material_to_do/ui_folder/start_folder/login_folder/login_screen_boarding.dart';
 
 
 class WelcomeScreenBoarding extends StatefulWidget{

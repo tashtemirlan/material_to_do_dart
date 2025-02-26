@@ -96,8 +96,8 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
         width: width * 0.95,
         height: height * 0.4,
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(245, 245, 245, 1),
-          borderRadius: BorderRadius.circular(8.0),
+          color: const Color.fromRGBO(250, 250, 250, 1),
+          borderRadius: BorderRadius.circular(15.0),
           border: Border.all(
             color: const Color.fromRGBO(221, 221, 221, 1),
             width: 1.0,

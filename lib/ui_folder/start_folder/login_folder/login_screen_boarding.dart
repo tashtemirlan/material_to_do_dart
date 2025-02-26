@@ -169,7 +169,6 @@ class LoginPageState extends State<LoginPage> {
         child: ElevatedButton(
             onPressed: () async{
               if(formLogin.currentState!.validate()){
-                print("login");
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(
                   builder: (BuildContext context) => const BottomNavBar(),
                 ));

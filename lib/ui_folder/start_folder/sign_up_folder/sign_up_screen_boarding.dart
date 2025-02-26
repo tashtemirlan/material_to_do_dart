@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_to_do/ui_folder/start_folder/login_folder/login_screen_boarding.dart';
+import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/policy_screen.dart';
+import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/privacy_screen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
@@ -47,6 +51,9 @@ class SignUpPageState extends State<SignUpPage> {
   TextEditingController passwordController = TextEditingController();
   //key for form field
   final formSignUp = GlobalKey<FormState>();
+
+  XFile? imageFile;
+  FileImage? userChooseImage;
 
   Widget signUpTextFormFieldName (width){
     return SizedBox(
@@ -243,24 +250,94 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget placeImage(width){
-    //TODO : add widget where we will place image for user. If not image added then we will set default
+  Widget uploadImagesContainer(double width, double height) {
     return GestureDetector(
-      onTap: (){},
-      child: Container(
-        width: width,
-        height: 125,
+      onTap: () {
+        _pickImages();
+      },
+      child: imageFile != null
+          ? Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.file(
+              File(imageFile!.path),
+              width: width * 0.95,
+              height: height * 0.4,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  imageFile = null;
+                  userChooseImage = null;
+                });
+              },
+              child: CircleAvatar(
+                radius: 24,
+                backgroundColor: Colors.white.withValues(alpha: 0.8),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.black,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+        ],
+      )
+          : Container(
+        width: width * 0.95,
+        height: height * 0.4,
         decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(30)
+          color: const Color.fromRGBO(250, 250, 250, 1),
+          borderRadius: BorderRadius.circular(15.0),
+          border: Border.all(
+            color: const Color.fromRGBO(221, 221, 221, 1),
+            width: 1.0,
+          ),
         ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-              AppLocalizations.of(context)!.place_image_text, textAlign: TextAlign.center,
-              style: GoogleFonts.roboto(textStyle: TextStyle(
-                  fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
-              ))),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const FaIcon(
+                FontAwesomeIcons.cameraRetro,
+                color: Color.fromRGBO(77, 170, 232, 1),
+                size: 30,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                AppLocalizations.of(context)!.add_image_string,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(textStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  letterSpacing: 0.2,
+                  fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.none,
+                )),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                AppLocalizations.of(context)!.max_capacity_image_string,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(textStyle:  const TextStyle(
+                  color: Color.fromRGBO(154, 154, 154, 1),
+                  fontSize: 12,
+                  letterSpacing: 0.2,
+                  fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.none,
+                )),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -272,7 +349,7 @@ class SignUpPageState extends State<SignUpPage> {
         child: ElevatedButton(
             onPressed: () async{
               if(formSignUp.currentState!.validate() && isChecked== true){
-                print("Sign up");
+                signUp(emailController.text, passwordController.text, nameController.text);
               }
               else{
                 if(isChecked == false){
@@ -381,8 +458,31 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  Future<void> signUp(String phone , String email , String password, String fullName) async{
+    if (pickedFile != null) {
+      File userSelectedFile = File(pickedFile.path);
+      if (userSelectedFile.lengthSync() <= 12 * 1024 * 1024) {
+        setState(() {
+          imageFile = XFile(pickedFile.path);
+          userChooseImage = FileImage(userSelectedFile);
+        });
+      }
+    } else {
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context)!.not_choosen_image,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.white,
+        textColor: Colors.black,
+        fontSize: 12.0,
+      );
+    }
+  }
+
+  Future<void> signUp(String email , String password, String fullName) async{
 
   }
 
@@ -415,131 +515,121 @@ class SignUpPageState extends State<SignUpPage> {
             color: colors.scaffoldColor,
             child: Form(
                 key: formSignUp,
-                child: SizedBox(
-                    width: width,
-                    height: mainSizedBoxHeightUserNotLogged,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        //first elem is x to sign out =>
-                        SizedBox(
-                            width: width,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24),
-                              child: Column(
-                                children: [
-                                  SizedBox(height: statusBarHeight+20,),
-                                  SizedBox(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          width: width,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Column(
+                              children: [
+                                SizedBox(height: statusBarHeight+20,),
+                                SizedBox(
+                                    width: width,
+                                    child: Text(
+                                        AppLocalizations.of(context)!.sign_up_text, textAlign: TextAlign.start,
+                                        style: GoogleFonts.roboto(textStyle: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.01,
+                                          color: colors.darkBlack,
+                                        )))
+                                ),
+                                const SizedBox(height: 12),
+                                signUpTextFormFieldName(width),
+                                const SizedBox(height: 12),
+                                signUpTextFormFieldEmail(width),
+                                const SizedBox(height: 12),
+                                signUpTextFormFieldPassword(width),
+                                const SizedBox(height: 40),
+                                uploadImagesContainer(width, mainSizedBoxHeightUserNotLogged),
+                                const SizedBox(height: 30),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                                      builder: (BuildContext context) => const LoginPage(),
+                                    ));
+                                  },
+                                  child: SizedBox(
                                       width: width,
-                                      child: Text(
-                                          AppLocalizations.of(context)!.sign_up_text, textAlign: TextAlign.start,
-                                          style: GoogleFonts.roboto(textStyle: TextStyle(
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.w800,
-                                            letterSpacing: 0.01,
-                                            color: colors.darkBlack,
-                                          )))
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 6),
+                                        child: Text(
+                                            AppLocalizations.of(context)!.login_text, textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
+                                            ))),
+                                      )
                                   ),
-                                  const SizedBox(height: 40),
-                                  placeImage(width),
-                                  const SizedBox(height: 12),
-                                  signUpTextFormFieldName(width),
-                                  const SizedBox(height: 12),
-                                  signUpTextFormFieldEmail(width),
-                                  const SizedBox(height: 12),
-                                  signUpTextFormFieldPassword(width),
-                                  const SizedBox(height: 16),
-                                  GestureDetector(
-                                    onTap: (){
-                                      Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                                        builder: (BuildContext context) => const LoginPage(),
-                                      ));
-                                    },
-                                    child: SizedBox(
-                                        width: width,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 6),
-                                          child: Text(
-                                              AppLocalizations.of(context)!.login_text, textAlign: TextAlign.center,
-                                              style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                  fontSize: 18, color: colors.mainColor, fontWeight: FontWeight.w500
-                                              ))),
-                                        )
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                        ),
-                        //second elem is additional placeholders
-                        Spacer(),
-                        SizedBox(
-                            width: width,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      checkBox(),
-                                      const SizedBox(width: 12,),
-                                      Expanded(child: RichText(
-                                        textAlign: TextAlign.left,
-                                        text: TextSpan(
-                                            text: AppLocalizations.of(context)!.policy_text_1,
-                                            style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 ,
-                                                color: colors.pureDarkColor,
-                                                fontWeight: FontWeight.w500
-                                            )),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text:  AppLocalizations.of(context)!.policy_text_2,
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      print("Policy1");
-                                                    },
-                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
-                                                      color: colors.mainColor,
-                                                      fontWeight: FontWeight.w500,
-                                                      decoration: TextDecoration.underline
-                                                  ))
-                                              ),
-                                              TextSpan(
-                                                  text:  AppLocalizations.of(context)!.policy_text_3,
-                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
-                                                      color: colors.pureDarkColor,
-                                                      fontWeight: FontWeight.w500
-                                                  ))
-                                              ),
-                                              TextSpan(
-                                                  text:  AppLocalizations.of(context)!.policy_text_4,
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      print("policy2");
-                                                    },
-                                                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
-                                                      color: colors.mainColor,
-                                                      fontWeight: FontWeight.w500,
-                                                      decoration: TextDecoration.underline
-                                                  ))
-                                              ),
-                                            ]
-                                        ),
-                                      ),)
-                                    ],
-                                  ),
-                                  const SizedBox(height: 40,),
-                                  buttonCreateAccount(width)
-                                ],
-                              ),
-                            )
-                        ),
-                        Spacer()
-                      ],
-                    )
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    checkBox(),
+                                    const SizedBox(width: 12,),
+                                    Expanded(child: RichText(
+                                      textAlign: TextAlign.left,
+                                      text: TextSpan(
+                                          text: AppLocalizations.of(context)!.policy_text_1,
+                                          style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 ,
+                                              color: colors.pureDarkColor,
+                                              fontWeight: FontWeight.w500
+                                          )),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text:  AppLocalizations.of(context)!.policy_text_2,
+                                                recognizer: TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Navigator.of(context).push(CupertinoPageRoute(
+                                                      builder: (BuildContext context) => const PolicyScreen(),
+                                                    ));
+                                                  },
+                                                style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
+                                                    color: colors.mainColor,
+                                                    fontWeight: FontWeight.w500,
+                                                    decoration: TextDecoration.underline
+                                                ))
+                                            ),
+                                            TextSpan(
+                                                text:  AppLocalizations.of(context)!.policy_text_3,
+                                                style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
+                                                    color: colors.pureDarkColor,
+                                                    fontWeight: FontWeight.w500
+                                                ))
+                                            ),
+                                            TextSpan(
+                                                text:  AppLocalizations.of(context)!.policy_text_4,
+                                                recognizer: TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Navigator.of(context).push(CupertinoPageRoute(
+                                                      builder: (BuildContext context) => const PrivacyScreen(),
+                                                    ));
+                                                  },
+                                                style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16,
+                                                    color: colors.mainColor,
+                                                    fontWeight: FontWeight.w500,
+                                                    decoration: TextDecoration.underline
+                                                ))
+                                            ),
+                                          ]
+                                      ),
+                                    ),)
+                                  ],
+                                ),
+                                const SizedBox(height: 30,),
+                                buttonCreateAccount(width),
+                                const SizedBox(height: 20,),
+                              ],
+                            ),
+                          )
+                      ),
+                    ],
+                  ),
                 )
             ),
           ),

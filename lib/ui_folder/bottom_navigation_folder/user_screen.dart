@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,8 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+import '../start_folder/sign_up_folder/policy_screen.dart';
+import '../start_folder/sign_up_folder/privacy_screen.dart';
 import '../user/user_change_avatar_bottom_sheet.dart';
 
 class UserScreen extends StatefulWidget {
@@ -348,8 +351,6 @@ class UserScreenState extends State<UserScreen>{
     );
   }
 
-  // TODO : write as a stateful widget this and take as a child inside model bottom sheet = >
-
   void changeUserImageBottomSheet(String imagePath) {
     showCupertinoModalBottomSheet<bool>(
       topRadius: const Radius.circular(40),
@@ -361,8 +362,6 @@ class UserScreenState extends State<UserScreen>{
       },
     );
   }
-
-  //End of TODO :
 
   void showPolicyAndPrivacyBottomSheetData(){
     showCupertinoModalBottomSheet<bool>(
@@ -409,11 +408,15 @@ class UserScreenState extends State<UserScreen>{
                 ),
                 const SizedBox(height: 10,),
                 GestureDetector(
-                  onTap: viewPolicyBottomSheet,
+                  onTap: (){
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (BuildContext context) => const PolicyScreen(),
+                    ));
+                  },
                   child: Container(
                     width: width*0.8,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
                         color: Colors.black
@@ -436,11 +439,15 @@ class UserScreenState extends State<UserScreen>{
                 ),
                 const SizedBox(height: 15,),
                 GestureDetector(
-                  onTap: viewPrivacyBottomSheet,
+                  onTap: (){
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (BuildContext context) => const PrivacyScreen(),
+                    ));
+                  },
                   child: Container(
                     width: width*0.8,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
                         color: Colors.black
@@ -464,82 +471,6 @@ class UserScreenState extends State<UserScreen>{
                 const SizedBox(height: 30,),
               ],
             ),
-        );
-      },
-    );
-  }
-
-  void viewPolicyBottomSheet(){
-    showCupertinoModalBottomSheet<bool>(
-      topRadius: const Radius.circular(40),
-      backgroundColor: colors.scaffoldColor,
-      context: context,
-      expand: false,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.policy_string,
-                  style: GoogleFonts.roboto(textStyle: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.black, fontSize: 24,
-                      fontWeight: FontWeight.w600
-                  )),
-                ),
-                const SizedBox(height: 15,),
-                Text(
-                  AppLocalizations.of(context)!.policy_generated_string,
-                  style: GoogleFonts.roboto(textStyle: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.black, fontSize: 16,
-                      fontWeight: FontWeight.w500
-                  )),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void viewPrivacyBottomSheet(){
-    showCupertinoModalBottomSheet<bool>(
-      topRadius: const Radius.circular(40),
-      backgroundColor: colors.scaffoldColor,
-      context: context,
-      expand: false,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.privacy_string,
-                  style: GoogleFonts.roboto(textStyle: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.black, fontSize: 24,
-                      fontWeight: FontWeight.w600
-                  )),
-                ),
-                const SizedBox(height: 15,),
-                Text(
-                  AppLocalizations.of(context)!.privacy_generated_string,
-                  style: GoogleFonts.roboto(textStyle: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.black, fontSize: 16,
-                      fontWeight: FontWeight.w500
-                  )),
-                )
-              ],
-            ),
-          ),
         );
       },
     );

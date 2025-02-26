@@ -23,6 +23,7 @@ Color errorTextFormFieldColor = const Color.fromRGBO(239, 80, 80, 1);
 Color weightColor = const Color.fromRGBO(119, 119, 119, 1);
 Color circleCheckColor = const Color.fromRGBO(37, 215, 81, 1);
 Color darkBlack = const Color.fromRGBO(32, 32, 32, 1);
+Color darkBlack1 = const Color.fromRGBO(48, 48, 48, 1);
 Color pureDarkColor = const Color.fromRGBO(0, 0, 0, 1);
 
 Color shimmerColor = Colors.grey.shade400;

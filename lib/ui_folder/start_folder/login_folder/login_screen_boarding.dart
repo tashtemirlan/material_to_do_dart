@@ -170,7 +170,7 @@ class LoginPageState extends State<LoginPage> {
             onPressed: () async{
               if(formLogin.currentState!.validate()){
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const BottomNavBar(),
+                  builder: (BuildContext context) => const BottomNavBar(position: 0,),
                 ));
               }
             },

@@ -7,7 +7,8 @@ import 'package:material_to_do/ui_folder/bottom_navigation_folder/bottom_navigat
 
 
 class CreateTaskScreen extends StatefulWidget {
-  const CreateTaskScreen({super.key});
+  final int position;
+  const CreateTaskScreen({super.key, required this.position});
 
   @override
   CreateTaskScreenState createState() => CreateTaskScreenState();
@@ -38,7 +39,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             GestureDetector(
               onTap: (){
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const BottomNavBar(),
+                  builder: (BuildContext context) => BottomNavBar(position: widget.position),
                 ));
               },
               child: FaIcon(FontAwesomeIcons.arrowLeft, color: Colors.black, size: 18,),

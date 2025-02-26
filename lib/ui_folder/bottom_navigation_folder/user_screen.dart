@@ -277,7 +277,7 @@ class UserScreenState extends State<UserScreen>{
                 backgroundColor: (nameController.text.length>=2)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
-                WidgetStateProperty.all<Color>(colors.mainColor.withOpacity(0.3))
+                WidgetStateProperty.all<Color>(colors.palete8)
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

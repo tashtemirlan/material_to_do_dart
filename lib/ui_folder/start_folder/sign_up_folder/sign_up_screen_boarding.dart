@@ -84,8 +84,9 @@ class SignUpPageState extends State<SignUpPage> {
             hintText: AppLocalizations.of(context)!.name_hint_text,
             fillColor: Colors.white,
             filled: true,
-            errorStyle: const TextStyle(
-              fontSize: 0,
+            errorStyle: TextStyle(
+                fontSize: 12,
+                color: colors.errorTextFormFieldColor
             ),
             errorMaxLines: 1,
             suffixIcon: (nameController.text.isEmpty)? const SizedBox() : (nameBool)?
@@ -148,8 +149,9 @@ class SignUpPageState extends State<SignUpPage> {
             hintText: "email@mail.com",
             fillColor: Colors.white,
             filled: true,
-            errorStyle: const TextStyle(
-              fontSize: 0,
+            errorStyle: TextStyle(
+                fontSize: 12,
+                color: colors.errorTextFormFieldColor
             ),
             errorMaxLines: 1,
             suffixIcon: (emailController.text.isEmpty)? const SizedBox() : (emailBool)?
@@ -213,8 +215,9 @@ class SignUpPageState extends State<SignUpPage> {
           hintText: AppLocalizations.of(context)!.password_hint_text,
           fillColor: Colors.white,
           filled: true,
-          errorStyle: const TextStyle(
-            fontSize: 0,
+          errorStyle: TextStyle(
+              fontSize: 12,
+              color: colors.errorTextFormFieldColor
           ),
           errorMaxLines: 1,
           suffixIcon: Padding(
@@ -368,7 +371,7 @@ class SignUpPageState extends State<SignUpPage> {
                 backgroundColor: (nameController.text.isNotEmpty  && emailController.text.isNotEmpty && passwordController.text.isNotEmpty && isChecked== true)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
-                WidgetStateProperty.all<Color>(colors.mainColor.withOpacity(0.3))
+                WidgetStateProperty.all<Color>(colors.palete8)
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

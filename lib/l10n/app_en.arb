@@ -64,6 +64,9 @@
   "end_date_string" : "End date",
   "create_task_string" : "Create task",
   "please_enter_text" : "Please enter text",
-  "not_selected_string" : "Not selected"
+  "not_selected_string" : "Not selected",
+  "apply_string" : "Apply",
+  "cancel_string": "Cancel",
+  "task_groups_list_empty_string" : "Task groups is empty, please create one."
 
 }

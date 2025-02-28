@@ -92,7 +92,6 @@ class BottomNavBarState extends State<BottomNavBar> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("Create note");
           Navigator.of(context).push(
             CupertinoPageRoute(builder: (BuildContext context) => CreateTaskScreen(position: selected,)),
           );

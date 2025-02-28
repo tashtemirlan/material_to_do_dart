@@ -1,8 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 
@@ -22,9 +24,11 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
 
   List<TaskGroupsDataClass> taskGroupsList = [];
 
+  TaskGroupsDataClass? selectedTaskGroup;
+
   bool titleBool = false;
   bool descriptionBool = false;
-  bool selectedTaskGroup = false;
+  bool selectedTaskGroupBool = false;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -34,6 +38,80 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
 
   final formCreateTask = GlobalKey<FormState>();
 
+  Widget taskGroupSelectWidget(){
+    if(taskGroupsList.isEmpty){
+      return Text(
+          AppLocalizations.of(context)!.task_groups_list_empty_string,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.roboto(textStyle: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+              letterSpacing: 0.01,
+              decoration: TextDecoration.none
+          ))
+      );
+    }
+    else{
+      return DropdownButtonFormField2<TaskGroupsDataClass>(
+        isExpanded: true,
+        decoration: InputDecoration(
+          // Add Horizontal padding using menuItemStyleData.padding so it matches
+          // the menu padding when button's width is not specified.
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          // Add more decoration..
+        ),
+        hint: const Text(
+          'Select task group',
+          style: TextStyle(fontSize: 14),
+        ),
+        items: taskGroupsList
+            .map((item) => DropdownMenuItem<TaskGroupsDataClass>(
+          value: item,
+          child: Text(
+            item.name!,
+            style: const TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        ))
+            .toList(),
+        validator: (value) {
+          if (value == null) {
+            return 'Please select gender.';
+          }
+          return null;
+        },
+        onChanged: (value) {
+          //Do something when selected item is changed.
+        },
+        onSaved: (value) {
+          selectedTaskGroup = value;
+        },
+        buttonStyleData: const ButtonStyleData(
+          padding: EdgeInsets.only(right: 8),
+        ),
+        iconStyleData: const IconStyleData(
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: Colors.black45,
+          ),
+          iconSize: 24,
+        ),
+        dropdownStyleData: DropdownStyleData(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        menuItemStyleData: const MenuItemStyleData(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+        ),
+      );
+    }
+  }
 
   Widget taskTitleWidget(double width){
     return SizedBox(
@@ -198,7 +276,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                     const SizedBox(height: 2,),
                     Text(
                       startDate == null ?
-                      AppLocalizations.of(context)!.not_selected_string: startDate.toString(),
+                      AppLocalizations.of(context)!.not_selected_string: DateFormat('dd.MM.yyyy').format(startDate!),
                       style: GoogleFonts.roboto(textStyle: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w400,
@@ -256,7 +334,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                       const SizedBox(height: 2,),
                       Text(
                         endDate == null ?
-                        AppLocalizations.of(context)!.not_selected_string: endDate.toString(),
+                        AppLocalizations.of(context)!.not_selected_string: DateFormat('dd.MM.yyyy').format(endDate!),
                         style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
@@ -295,7 +373,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                 ),
                 backgroundColor: (titleController.text.isNotEmpty
                     && descriptionController.text.isNotEmpty
-                    && selectedTaskGroup==true)?
+                    && selectedTaskGroupBool == true)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
                 WidgetStateProperty.all<Color>(colors.palete8)
@@ -303,7 +381,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
-                  AppLocalizations.of(context)!.sign_up_text,
+                  AppLocalizations.of(context)!.create_task_string,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
@@ -313,14 +391,141 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     );
   }
 
-
   //TODO : solve logic to pick date and with task groups
-  void pickUpStartDate(){
-
+  void pickUpStartDate() async{
+    final selectDate = await showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: 300,
+          color: Colors.white,
+          child: Column(
+            children: [
+              // Action buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: Text(
+                          AppLocalizations.of(context)!.cancel_string,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: colors.mainColor,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          ))
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoButton(
+                      child: Text(
+                          AppLocalizations.of(context)!.apply_string,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: colors.mainColor,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          ))
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, startDate);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              // Date picker
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  minimumDate: DateTime.now(),
+                  onDateTimeChanged: (DateTime dateTime) {
+                    startDate = dateTime;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if(selectDate!=null){
+      setState(() {
+        startDate = selectDate;
+      });
+    }
   }
 
-  void pickUpEndDate(){
-
+  void pickUpEndDate() async{
+    final selectDate = await showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: 300,
+          color: Colors.white,
+          child: Column(
+            children: [
+              // Action buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: Text(
+                          AppLocalizations.of(context)!.cancel_string,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: colors.mainColor,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          ))
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoButton(
+                      child: Text(
+                          AppLocalizations.of(context)!.apply_string,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: colors.mainColor,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          ))
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, endDate);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              // Date picker
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  minimumDate: DateTime.now(),
+                  onDateTimeChanged: (DateTime dateTime) {
+                    endDate = dateTime;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if(selectDate!=null){
+      setState(() {
+        endDate = selectDate;
+      });
+    }
   }
 
   @override
@@ -382,7 +587,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                           ),
                         ),
                         const SizedBox(height: 20,),
-                        (taskGroupsList.isEmpty)? Text("data") : Text("DAta"),
+                        taskGroupSelectWidget(),
                         const SizedBox(height: 20,),
                         taskTitleWidget(width),
                         const SizedBox(height: 20,),

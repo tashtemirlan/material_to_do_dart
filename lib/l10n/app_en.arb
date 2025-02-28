@@ -54,5 +54,7 @@
   "passwords_not_match" : "Passwords not match!",
 
   "password_successfully_reset" : "Password successfully reset!",
-  "password_reset_description_string" : "Now you can log in via new credentials."
+  "password_reset_description_string" : "Now you can log in via new credentials.",
+
+  "notes_string" : "Notes"
 }

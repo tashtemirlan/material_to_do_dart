@@ -54,5 +54,8 @@
   "passwords_not_match" : "Пароли не совпадают!",
 
   "password_successfully_reset" : "Пароль успешно сброшен!",
-  "password_reset_description_string" : "Теперь вы можете войти в свой аккаунт с использованием нового пароля."
+  "password_reset_description_string" : "Теперь вы можете войти в свой аккаунт с использованием нового пароля.",
+
+  "notes_string" : "Заметки",
+  "notes_list_empty_string" : "Список заметок пуст"
 }

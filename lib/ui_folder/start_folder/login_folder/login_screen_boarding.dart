@@ -58,8 +58,9 @@ class LoginPageState extends State<LoginPage> {
             hintText: "email@mail.com",
             fillColor: Colors.white,
             filled: true,
-            errorStyle: const TextStyle(
-              fontSize: 0,
+            errorStyle: TextStyle(
+                fontSize: 12,
+                color: colors.errorTextFormFieldColor
             ),
             errorMaxLines: 1,
             suffixIcon: (emailController.text.isEmpty)? const SizedBox() : (emailBool)?
@@ -121,8 +122,9 @@ class LoginPageState extends State<LoginPage> {
           hintText: AppLocalizations.of(context)!.password_hint_text,
           fillColor: Colors.white,
           filled: true,
-          errorStyle: const TextStyle(
-            fontSize: 0,
+          errorStyle: TextStyle(
+              fontSize: 12,
+              color: colors.errorTextFormFieldColor
           ),
           errorMaxLines: 1,
           suffixIcon: Padding(
@@ -170,7 +172,7 @@ class LoginPageState extends State<LoginPage> {
             onPressed: () async{
               if(formLogin.currentState!.validate()){
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const BottomNavBar(),
+                  builder: (BuildContext context) => const BottomNavBar(position: 0,),
                 ));
               }
             },
@@ -183,7 +185,7 @@ class LoginPageState extends State<LoginPage> {
                 backgroundColor: (emailController.text.length>=5 && passwordController.text.length>=8)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
-                WidgetStateProperty.all<Color>(colors.mainColor.withOpacity(0.3))
+                WidgetStateProperty.all<Color>(colors.palete8)
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

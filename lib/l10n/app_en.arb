@@ -57,5 +57,19 @@
   "password_reset_description_string" : "Now you can log in via new credentials.",
 
   "notes_string" : "Notes",
-  "notes_list_empty_string" : "Notes list are empty"
+  "notes_list_empty_string" : "Notes list are empty",
+
+  "add_task_string" : "Add task",
+  "task_group_string" : "Task group",
+  "task_title_string" : "Task title",
+  "task_description_string" : "Task description",
+  "start_date_string" : "Start date",
+  "end_date_string" : "End date",
+  "create_task_string" : "Create task",
+  "please_enter_text" : "Please enter text",
+  "not_selected_string" : "Not selected",
+  "apply_string" : "Apply",
+  "cancel_string": "Cancel",
+  "task_groups_list_empty_string" : "Task groups is empty, please create one."
+
 }

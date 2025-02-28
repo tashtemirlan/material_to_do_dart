@@ -57,5 +57,18 @@
   "password_reset_description_string" : "Теперь вы можете войти в свой аккаунт с использованием нового пароля.",
 
   "notes_string" : "Заметки",
-  "notes_list_empty_string" : "Список заметок пуст"
+  "notes_list_empty_string" : "Список заметок пуст",
+
+  "add_task_string" : "Добавить задачу",
+  "task_group_string" : "Группа задач",
+  "task_title_string" : "Заголовок задачи",
+  "task_description_string" : "Описание задачи",
+  "start_date_string" : "Дата начала",
+  "end_date_string" : "Дата окончания",
+  "create_task_string" : "Создать задачу",
+  "please_enter_text" : "Пожалуйста введите текст",
+  "not_selected_string" : "Не выбрано",
+  "apply_string" : "Применить",
+  "cancel_string": "Отменить",
+  "task_groups_list_empty_string" : "Список задач групп пустой, пожалуйста создайте одну."
 }

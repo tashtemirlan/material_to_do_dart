@@ -11,7 +11,8 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import '../../global_folder/globals.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  final int? position;
+  const BottomNavBar({super.key, required this.position});
 
   @override
   BottomNavBarState createState() => BottomNavBarState();
@@ -41,10 +42,21 @@ class BottomNavBarState extends State<BottomNavBar> {
     );
   }
 
+  Future<void> initVoid() async{
+    if(widget.position!=null){selected = widget.position!;}
+  }
+
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initVoid();
   }
 
   void onItemTapped(int index) {
@@ -80,9 +92,8 @@ class BottomNavBarState extends State<BottomNavBar> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("Create note");
-          Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (BuildContext context) => const CreateTaskScreen()),
+          Navigator.of(context).push(
+            CupertinoPageRoute(builder: (BuildContext context) => CreateTaskScreen(position: selected,)),
           );
         },
         backgroundColor: colors.mainColor,

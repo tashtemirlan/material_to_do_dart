@@ -52,7 +52,16 @@ class NotesScreenState extends State<NotesScreen>{
     }
     else{
       if(list.isEmpty){
-        return Text("list is empty");
+        return Text(
+          AppLocalizations.of(context)!.notes_list_empty_string,
+          style: GoogleFonts.roboto(textStyle: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              letterSpacing: 0.01,
+              decoration: TextDecoration.none
+          )),
+        );
       }
       else{
         return SizedBox(

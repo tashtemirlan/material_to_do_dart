@@ -56,5 +56,6 @@
   "password_successfully_reset" : "Password successfully reset!",
   "password_reset_description_string" : "Now you can log in via new credentials.",
 
-  "notes_string" : "Notes"
+  "notes_string" : "Notes",
+  "notes_list_empty_string" : "Notes list are empty"
 }

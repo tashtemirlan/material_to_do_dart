@@ -267,8 +267,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                       AppLocalizations.of(context)!.start_date_string,
                       style: GoogleFonts.roboto(textStyle: TextStyle(
                           color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14,
                           letterSpacing: 0.01,
                           decoration: TextDecoration.none
                       )),
@@ -276,11 +276,11 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                     const SizedBox(height: 2,),
                     Text(
                       startDate == null ?
-                      AppLocalizations.of(context)!.not_selected_string: DateFormat('dd.MM.yyyy').format(startDate!),
+                      AppLocalizations.of(context)!.not_selected_string: formatDateWithSuffix(startDate!),
                       style: GoogleFonts.roboto(textStyle: TextStyle(
                           color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
                           letterSpacing: 0.01,
                           decoration: TextDecoration.none
                       )),
@@ -325,8 +325,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                         AppLocalizations.of(context)!.end_date_string,
                         style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                            fontSize: 14,
                             letterSpacing: 0.01,
                             decoration: TextDecoration.none
                         )),
@@ -334,11 +334,11 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                       const SizedBox(height: 2,),
                       Text(
                         endDate == null ?
-                        AppLocalizations.of(context)!.not_selected_string: DateFormat('dd.MM.yyyy').format(endDate!),
+                        AppLocalizations.of(context)!.not_selected_string: formatDateWithSuffix(endDate!),
                         style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
                             letterSpacing: 0.01,
                             decoration: TextDecoration.none
                         )),
@@ -391,7 +391,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     );
   }
 
-  //TODO : solve logic to pick date and with task groups
   void pickUpStartDate() async{
     final selectDate = await showCupertinoModalPopup(
       context: context,
@@ -441,7 +440,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
               // Date picker
               Expanded(
                 child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
+                  mode: CupertinoDatePickerMode.dateAndTime,
                   minimumDate: DateTime.now(),
                   onDateTimeChanged: (DateTime dateTime) {
                     startDate = dateTime;
@@ -454,9 +453,24 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
       },
     );
     if(selectDate!=null){
-      setState(() {
-        startDate = selectDate;
-      });
+      if(endDate==null){
+        setState(() {
+          startDate = selectDate;
+        });
+      }
+      else{
+        if(startDate!.isAfter(endDate!)){
+          setState(() {
+            startDate = selectDate;
+            endDate = null;
+          });
+        }
+        else{
+          setState(() {
+            startDate = selectDate;
+          });
+        }
+      }
     }
   }
 
@@ -509,8 +523,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
               // Date picker
               Expanded(
                 child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  minimumDate: DateTime.now(),
+                  mode: CupertinoDatePickerMode.dateAndTime,
+                  minimumDate: (startDate == null)? DateTime.now() : startDate,
                   onDateTimeChanged: (DateTime dateTime) {
                     endDate = dateTime;
                   },
@@ -528,6 +542,63 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     }
   }
 
+  String formatDateWithSuffix(DateTime date) {
+    Locale locale = Localizations.localeOf(context);
+    if (locale.languageCode == 'en') {
+      String day = DateFormat('d', 'en').format(date);
+      String month = DateFormat('MMMM', 'en').format(date);
+      String hoursAndMinutes = DateFormat('HH:mm', 'en').format(date);
+      return '$day${_getDaySuffixEnglish(day)} $month, ${date.year}  $hoursAndMinutes';
+    } else {
+      String day = DateFormat('d', 'ru').format(date);
+      String hoursAndMinutes = DateFormat('HH:mm', 'en').format(date);
+      return '$day${_getRussianDaySuffix(day)} ${getMonthInGenitive(date.month)}, ${date.year}  $hoursAndMinutes';
+    }
+  }
+
+  String _getDaySuffixEnglish(String day) {
+    int dayNumber = int.parse(day);
+    if (dayNumber >= 11 && dayNumber <= 13) {
+      return 'th';
+    }
+    switch (dayNumber % 10) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  }
+
+  String _getRussianDaySuffix(String day) {
+    int dayNumber = int.parse(day);
+    if (dayNumber >= 11 && dayNumber <= 14) {
+      return 'е';  // Special case for 11-14 (like 11-е, 12-е)
+    }
+    switch (dayNumber % 10) {
+      case 1:
+        return 'ое';  // 1ое
+      case 2:
+      case 3:
+      case 4:
+        return 'е';   // 2е, 3е, 4е
+      default:
+        return 'е';   // 5е and all others
+    }
+  }
+
+  String getMonthInGenitive(int month) {
+    const monthsGenitive = [
+      'Января', 'Февраля', 'Марта', 'Апреля',
+      'Мая', 'Июня', 'Июля', 'Августа',
+      'Сентября', 'Октября', 'Ноября', 'Декабря'
+    ];
+    return monthsGenitive[month - 1]; // month is 1-based
+  }
+  
   @override
   void dispose() {
     super.dispose();

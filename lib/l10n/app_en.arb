@@ -70,6 +70,14 @@
   "not_selected_string" : "Not selected",
   "apply_string" : "Apply",
   "cancel_string": "Cancel",
-  "task_groups_list_empty_string" : "Task groups is empty, please create one."
+  "task_groups_list_empty_string" : "Task groups is empty, please create one.",
+  "today_tasks_string" : "Today's tasks",
+  "pick_date_string" : "Pick date",
+
+  "tasks_list_empty" : "No any task \uD83D\uDE01",
+  "all_string" : "All",
+  "to_do_string" : "To do",
+  "in_progress_string" : "In Progress",
+  "completed_string" : "Completed"
 
 }

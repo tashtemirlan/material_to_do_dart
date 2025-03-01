@@ -70,5 +70,13 @@
   "not_selected_string" : "Не выбрано",
   "apply_string" : "Применить",
   "cancel_string": "Отменить",
-  "task_groups_list_empty_string" : "Список задач групп пустой, пожалуйста создайте одну."
+  "task_groups_list_empty_string" : "Список задач групп пустой, пожалуйста создайте одну.",
+  "today_tasks_string" : "Задачи на сегодня",
+  "pick_date_string" : "Выбрать дату",
+  "tasks_list_empty" : "Задач нет \uD83D\uDE01",
+  "all_string" : "Все",
+  "to_do_string" : "Сделать",
+  "in_progress_string" : "В прогрессе",
+  "completed_string" : "Завершено"
+
 }

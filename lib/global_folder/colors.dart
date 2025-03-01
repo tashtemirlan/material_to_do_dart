@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 Color scaffoldColor = Color.fromRGBO(244, 244, 244, 1);
 Color teitLogoColor = Color.fromRGBO(21, 126, 254, 1);
 Color mainColor = Color.fromRGBO(95, 51, 225, 1);
+Color additionalColor = Color.fromRGBO(237, 232, 255, 1);
+
 
 Color palete1 = Color.fromRGBO(205, 180, 219, 1);
 Color palete2 = Color.fromRGBO(255, 200, 221, 1);

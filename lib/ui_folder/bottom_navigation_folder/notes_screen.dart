@@ -101,7 +101,7 @@ class NotesScreenState extends State<NotesScreen>{
   Future<void> initVoid() async{
     await getNotes();
     setState(() {
-      dataGet = true;
+      dataGet = false;
     });
   }
 
@@ -166,7 +166,7 @@ class NotesScreenState extends State<NotesScreen>{
                       ),
                       const SizedBox(height: 10,),
                       notesList(width),
-                      SizedBox(height: bottomNavBarHeight+10,)
+                      SizedBox(height: bottomNavBarHeight+40,)
                     ],
                   ),
                 ),

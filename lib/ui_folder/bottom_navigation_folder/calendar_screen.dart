@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -229,12 +228,10 @@ class CalendarScreenState extends State<CalendarScreen>{
   String formatDateWithSuffix(DateTime date) {
     Locale locale = Localizations.localeOf(context);
     if (locale.languageCode == 'en') {
-      print("this is english");
       String day = DateFormat('d', 'en').format(date);
       String month = DateFormat('MMMM', 'en').format(date);
       return '$day${_getDaySuffixEnglish(day)} $month';
     } else {
-      print("this is russian");
       String day = DateFormat('d', 'ru').format(date);
       return '$day${_getRussianDaySuffix(day)} ${getMonthInGenitive(date.month)}';
     }

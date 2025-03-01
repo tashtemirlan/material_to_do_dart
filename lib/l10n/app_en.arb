@@ -78,6 +78,8 @@
   "all_string" : "All",
   "to_do_string" : "To do",
   "in_progress_string" : "In Progress",
-  "completed_string" : "Completed"
+  "completed_string" : "Completed",
+
+  "task_groups" : "Task Groups"
 
 }

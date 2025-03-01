@@ -77,6 +77,8 @@
   "all_string" : "Все",
   "to_do_string" : "Сделать",
   "in_progress_string" : "В прогрессе",
-  "completed_string" : "Завершено"
+  "completed_string" : "Завершено",
+
+  "task_groups" : "Группы задач"
 
 }

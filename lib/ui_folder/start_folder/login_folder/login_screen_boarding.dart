@@ -1,14 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_to_do/ui_folder/bottom_navigation_folder/bottom_navigation_screen.dart';
 import 'package:material_to_do/ui_folder/start_folder/login_folder/forget_password_folder/forget_password_email_screen.dart';
 import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/sign_up_screen_boarding.dart';
+
+import '../../../data_class_folder/login_sign_up_folder/login_token_data_class.dart';
 
 
 class LoginPage extends StatefulWidget{
@@ -29,13 +35,13 @@ class LoginPageState extends State<LoginPage> {
   //key for form field
   final formLogin = GlobalKey<FormState>();
 
-  Widget loginTextFormFieldPhone (width){
+  Widget loginTextFormFieldEmail (width){
     return SizedBox(
       width: width,
       child: TextFormField(
         controller: emailController,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardType: TextInputType.text,
+        keyboardType: TextInputType.emailAddress,
         decoration:  InputDecoration(
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.transparent),
@@ -171,9 +177,7 @@ class LoginPageState extends State<LoginPage> {
         child: ElevatedButton(
             onPressed: () async{
               if(formLogin.currentState!.validate()){
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const BottomNavBar(position: 0,),
-                ));
+                await login(emailController.text, passwordController.text);
               }
             },
             style: ButtonStyle(
@@ -200,8 +204,43 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> login(String phone, String password) async{
-
+  Future<void> login(String email, String password) async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    //set Dio response =>
+    try{
+      final response = await dio.post(
+          endpoints.loginPostEndpoint ,
+          data: {
+            "email" : email,
+            "password" : password
+          }
+      );
+      if(response.statusCode == 200){
+        var box = await Hive.openBox("auth");
+        final result = loginTokenDataClassFromJson(response.toString());
+        box.put("token", result.token);
+        Navigator.of(context).pushReplacement(CupertinoPageRoute(
+          builder: (BuildContext context) => const BottomNavBar(position: 0,),
+        ));
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.login_error_string,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -259,7 +298,7 @@ class LoginPageState extends State<LoginPage> {
                                           ))
                                   ),
                                   const SizedBox(height: 40),
-                                  loginTextFormFieldPhone(width),
+                                  loginTextFormFieldEmail(width),
                                   const SizedBox(height: 12),
                                   loginTextFormFieldPassword(width),
                                   const SizedBox(height: 16),

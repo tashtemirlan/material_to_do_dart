@@ -1,8 +1,4 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 
@@ -168,38 +164,30 @@ class ForgetPasswordEmailScreenState extends State<ForgetPasswordEmailScreen>{
                               const SizedBox(height: 10,),
                               textFormFieldEmail(width),
                               const SizedBox(height: 10,),
-                              SizedBox(width: width*0.85,
-                                  height: mainSizedBoxHeightUserNotLogged*0.07  ,
-                                  child: ElevatedButton(
-                                      onPressed: ()async{
-                                        if (formKeyForgetPassword.currentState!.validate()) {
-                                          print("Form email is valid");
-                                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                              builder: (BuildContext context) => ForgetPasswordCodeScreen(userEmailForgetPassword: emailController.text,)));
-                                        }
-                                      },
-                                      style: ButtonStyle(
-                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          backgroundColor: (textFormFieldHaveValue)?
-                                          WidgetStateProperty.all<Color>(
-                                               colors.mainColor
-                                          ) :
-                                          WidgetStateProperty.all<Color>(
-                                              const Color.fromRGBO(221, 221, 221, 1)
-                                          )
-                                      ),
+                              GestureDetector(
+                                onTap: ()async{
+                                  if (formKeyForgetPassword.currentState!.validate()) {
+                                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                        builder: (BuildContext context) => ForgetPasswordCodeScreen(userEmailForgetPassword: emailController.text,)));
+                                  }
+                                },
+                                child: Container(
+                                  width: width*0.85,
+                                  decoration: BoxDecoration(
+                                    color: (textFormFieldHaveValue)? colors.mainColor : colors.additionalColor,
+                                    borderRadius: BorderRadius.circular(8)
+                                  ),
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 13),
                                       child: Text(
                                           AppLocalizations.of(context)!.send_string,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                               fontSize: 18, color: Colors.white, fontWeight: FontWeight.w500 , letterSpacing: 0.2
                                           ))
-                                  )
-                              ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         )

@@ -79,6 +79,11 @@
   "in_progress_string" : "В прогрессе",
   "completed_string" : "Завершено",
 
-  "task_groups" : "Группы задач"
-
+  "task_groups" : "Группы задач",
+  "code_string" : "Код",
+  "code_not_right" : "Код неправильный!",
+  "user_with_this_email_not_exist_string" : "Пользователя с такой почтой не существует!",
+  "login_error_string" : "Логин и/или пароль неверны!",
+  "cant_get_data" : "Не смогли получить данные",
+  "user_created_string" : "Пользователь создан!"
 }

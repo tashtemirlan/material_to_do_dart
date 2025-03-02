@@ -30,7 +30,6 @@ class PolicyScreenState extends State<PolicyScreen> {
     //set Dio response =>
     try{
       final response = await dio.get(endpoints.policyGetEndpoint);
-      print(response);
       if(response.statusCode == 200){
         final result = policyDataClassFromJson(response.toString());
         if(result.data != null){mainText = result.data!;}
@@ -113,7 +112,7 @@ class PolicyScreenState extends State<PolicyScreen> {
                             child: Text(
                               mainText ,
                               textAlign: TextAlign.left,
-                              style: TextStyle(fontSize: 14, color: colors.darkBlack1, fontWeight: FontWeight.w400,
+                              style: TextStyle(fontSize: 18, color: colors.darkBlack1, fontWeight: FontWeight.w500,
                               ),
                             ),
                           )

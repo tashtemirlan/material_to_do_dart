@@ -80,6 +80,11 @@
   "in_progress_string" : "In Progress",
   "completed_string" : "Completed",
 
-  "task_groups" : "Task Groups"
-
+  "task_groups" : "Task Groups",
+  "code_string" : "Code",
+  "code_not_right" : "Code not right!",
+  "user_with_this_email_not_exist_string" : "User with this email not exist!",
+  "login_error_string" : "Login and/or password is incorrect!",
+  "cant_get_data" : "Can't get data",
+  "user_created_string" : "User created!"
 }

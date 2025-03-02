@@ -1,12 +1,13 @@
-import 'dart:developer';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/adapters.dart';
-
-
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:material_to_do/ui_folder/bottom_navigation_folder/bottom_navigation_screen.dart';
+import 'package:material_to_do/ui_folder/start_folder/login_folder/login_screen_boarding.dart';
 import 'package:material_to_do/ui_folder/start_folder/welcome_screen_boarding.dart';
 
 
@@ -21,8 +22,8 @@ class SplashScreen extends StatefulWidget{
 class SplashScreenState extends State<SplashScreen>{
 
   Future<bool> checkWelcomeCompleted() async{
-    var box = await Hive.openBox("Tokens");
-    bool welcomeToken = box.containsKey("welcomeToken");
+    var box = await Hive.openBox("welcome_board");
+    bool welcomeToken = box.containsKey("welcome_key");
     if(welcomeToken){
       return true;
     }
@@ -32,26 +33,61 @@ class SplashScreenState extends State<SplashScreen>{
   }
 
   Future<void> checkTokensAuth() async{
-    var box = await Hive.openBox("Tokens");
-    bool accessTokenBoolean = box.containsKey("accessToken");
-    bool refreshTokenBoolean = box.containsKey("refreshToken");
-    if(accessTokenBoolean == true && refreshTokenBoolean == true){
-      final accessToken = box.get("accessToken");
-      final refreshToken = box.get("refreshToken");
-      final isTokensValid = await checkValidUserToken(accessToken, refreshToken);
+    var box = await Hive.openBox("auth");
+    bool accessTokenBoolean = box.containsKey("token");
+    print("token is here : $accessTokenBoolean");
+    if(accessTokenBoolean == true){
+      final accessToken = box.get("token");
+      print("Access token : $accessToken");
+      final isTokensValid = await checkValidUserToken(accessToken);
       if(isTokensValid){
         //if tokens are valid then we navigate user to screen with his pin number or face id
+        Future.delayed(Duration(milliseconds: 1500), ()=>Navigator.of(context).pushReplacement(CupertinoPageRoute(
+          builder: (BuildContext context) => const BottomNavBar(position: 0),
+        )));
       }
       else{
         //if tokens are not valid then we must navigate to login screen
+        Future.delayed(Duration(milliseconds: 1500), ()=>Navigator.of(context).pushReplacement(CupertinoPageRoute(
+          builder: (BuildContext context) => const LoginPage(),
+        )));
       }
     }
     else{
       //if here is no any tokens then we must navigate user to login screen
+      Future.delayed(Duration(milliseconds: 1500), ()=>Navigator.of(context).pushReplacement(CupertinoPageRoute(
+        builder: (BuildContext context) => const LoginPage(),
+      )));
     }
   }
 
-  Future<bool> checkValidUserToken(String accessToken, String refreshToken) async{
+  Future<bool> checkValidUserToken(String accessToken) async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    //set Dio response =>
+    dio.options.headers['Authorization'] = "Bearer $accessToken";
+    try{
+      final response = await dio.post(endpoints.validateTokenPostEndpoint);
+      if(response.statusCode == 200){
+        return true;
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
     return false;
   }
 

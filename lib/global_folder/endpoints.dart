@@ -1,4 +1,4 @@
-String mainPath = "http://localhost:2525";
+String mainPath = "localhost:2525";
 
 /**
  * just standart commit
@@ -18,7 +18,7 @@ String forgetPasswordChangePasswordPostEndpoint = "$mainPath/api/auth/forget-pas
 
 String policyGetEndpoint = "$mainPath/api/documents/getPolicy";
 String privacyGetEndpoint = "$mainPath/api/documents/getPrivacy";
-
+String validateTokenPostEndpoint = "$mainPath/api/auth/validate-token";
 /**
  * ! user section
  */

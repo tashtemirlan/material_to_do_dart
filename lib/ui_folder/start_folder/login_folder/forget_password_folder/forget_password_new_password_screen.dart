@@ -1,18 +1,18 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 
 import '../login_screen_boarding.dart';
 import 'forget_password_password_reseted.dart';
 
 
 class ForgetPasswordNewPasswordScreen extends StatefulWidget{
-  const ForgetPasswordNewPasswordScreen({super.key});
+  final String userEmail;
+  const ForgetPasswordNewPasswordScreen({super.key, required this.userEmail});
 
   @override
   ForgetPasswordNewPasswordScreenState createState ()=> ForgetPasswordNewPasswordScreenState();
@@ -154,6 +154,41 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
     );
   }
 
+  Future<void> changePassword(String password) async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    //set Dio response =>
+    try{
+      final response = await dio.post(
+          endpoints.forgetPasswordChangePasswordPostEndpoint,
+          data: {
+            "email" : widget.userEmail,
+            "password" : password
+          }
+      );
+      if(response.statusCode == 200){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => const ForgetPasswordPasswordReseted()));
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: toParseData,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
+  }
+
   @override
   void dispose() {
     passwordController.dispose();
@@ -172,9 +207,6 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     double statusBarHeight = MediaQuery.of(context).padding.top;
-    double bottomNavBarHeight = kBottomNavigationBarHeight;
-    double mainSizedBoxHeightUserNotLogged = height - bottomNavBarHeight - statusBarHeight;
-
 
     return PopScope(
       canPop: false,
@@ -183,13 +215,13 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
           body:Padding(padding: EdgeInsets.only(top: statusBarHeight),
             child: Container(
               width: width,
-              height: mainSizedBoxHeightUserNotLogged,
+              height: height,
               color: const Color.fromRGBO(250, 250, 250, 1),
               child: Form(
                 key: formResetPasswordCreation,
                 child: SizedBox(
                   width: width*0.95,
-                  height: mainSizedBoxHeightUserNotLogged,
+                  height: height,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,7 +241,7 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
                         ),
                       ),
                       SizedBox(
-                        height: mainSizedBoxHeightUserNotLogged * 0.8,
+                        height: height * 0.8,
                         child: Column(
                           children: [
                             SizedBox(
@@ -228,15 +260,14 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
                             const SizedBox(height: 10,),
                             Container(
                                 width: width*0.8,
-                                height: mainSizedBoxHeightUserNotLogged*0.07,
+                                height: height*0.07,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: ElevatedButton(
                                       onPressed: () async{
                                         if(passwordController.text==passwordRetryController.text){
                                           if(formResetPasswordCreation.currentState!.validate()){
-                                            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                                builder: (BuildContext context) => const ForgetPasswordPasswordReseted()));
+                                            await changePassword(passwordController.text);
                                           }
                                         }
                                         else{

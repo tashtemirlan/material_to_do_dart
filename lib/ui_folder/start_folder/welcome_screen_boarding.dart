@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -76,7 +77,9 @@ class WelcomeScreenBoardingState extends State<WelcomeScreenBoarding>{
                   const SizedBox(height: 10,),
                   Spacer(),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () async{
+                      var box = await Hive.openBox("welcome_board");
+                      box.put("welcome_key", "completed");
                       Navigator.of(context).pushReplacement(CupertinoPageRoute(
                         builder: (BuildContext context) => const LoginPage(),
                       ));

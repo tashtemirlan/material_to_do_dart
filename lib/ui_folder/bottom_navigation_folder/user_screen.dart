@@ -1,15 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+import '../../data_class_folder/user_folder/user_data_class.dart';
 import '../start_folder/sign_up_folder/policy_screen.dart';
 import '../start_folder/sign_up_folder/privacy_screen.dart';
+import '../start_folder/start_screen.dart';
 import '../user/user_change_avatar_bottom_sheet.dart';
 
 class UserScreen extends StatefulWidget {
@@ -22,6 +30,10 @@ class UserScreen extends StatefulWidget {
 class UserScreenState extends State<UserScreen>{
 
   TextEditingController nameController = TextEditingController();
+
+  UserDataClass? user;
+
+  bool dataGet = false;
 
   Future<void> logoutUser () async{
     showDialog(
@@ -68,7 +80,10 @@ class UserScreenState extends State<UserScreen>{
                   const SizedBox(width: 8,),
                   TextButton(
                       onPressed: () async{
-                        print("logout action");
+                        var box = await Hive.openBox("auth");
+                        await box.clear();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (BuildContext context) => const SplashScreen()));
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -155,17 +170,48 @@ class UserScreenState extends State<UserScreen>{
                   ),
                 ),
                 const SizedBox(height: 10,),
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.shade500
+                SizedBox(
+                  width: width/3,
+                  height: width/3,
+                  child: CachedNetworkImage(
+                    imageUrl: "${endpoints.mainPath}/${user!.image!}",
+                    progressIndicatorBuilder: (context, url, downloadProgress) {
+                      return Center(
+                        child: Container(
+                          width: width,
+                          height: width / 3,
+                          color: Colors.grey.shade200,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 48,
+                              height: 48,
+                              child: CircularProgressIndicator(
+                                value: downloadProgress.progress,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: InstaImageViewer(
+                          child: Image(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            filterQuality: FilterQuality.high,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 15,),
                 Text(
-                  "User name here",
+                  user!.fullName!,
                   style: GoogleFonts.roboto( textStyle: TextStyle(
                       color: Colors.black,
                       decoration: TextDecoration.none,
@@ -175,7 +221,7 @@ class UserScreenState extends State<UserScreen>{
                 const SizedBox(height: 20,),
                 GestureDetector(
                   onTap: (){
-                    changeUserNameBottomSheet("Person");
+                    changeUserNameBottomSheet(user!.fullName!);
                   },
                   child: chevronSelectContainer(
                       width: width,
@@ -184,7 +230,7 @@ class UserScreenState extends State<UserScreen>{
                 const SizedBox(height: 10,),
                 GestureDetector(
                   onTap: (){
-                    changeUserImageBottomSheet("https://static.wikia.nocookie.net/kimetsu-no-yaiba/images/0/08/Yoriichi_Tsugikuni_%28Anime%29.png/revision/latest?cb=20230411022113");
+                    changeUserImageBottomSheet("${endpoints.mainPath}/${user!.image!}");
                   },
                   child: chevronSelectContainer(
                       width: width,
@@ -266,7 +312,9 @@ class UserScreenState extends State<UserScreen>{
         width: width,
         child: ElevatedButton(
             onPressed: () async{
-              print("updated data for user name");
+              if(nameController.text.length>=2){
+                Navigator.of(context).pop(nameController.text);
+              }
             },
             style: ButtonStyle(
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
@@ -292,8 +340,8 @@ class UserScreenState extends State<UserScreen>{
     );
   }
 
-  void changeUserNameBottomSheet(String userName){
-    showCupertinoModalBottomSheet<bool>(
+  void changeUserNameBottomSheet(String userName) async{
+    final result = await showCupertinoModalBottomSheet<String>(
       topRadius: const Radius.circular(40),
       backgroundColor: colors.scaffoldColor,
       context: context,
@@ -349,10 +397,21 @@ class UserScreenState extends State<UserScreen>{
         );
       },
     );
+    if(result!=null){
+      Navigator.of(context).pop();
+      setState(() {
+        dataGet = false;
+      });
+      await updateUserName(result);
+      await getUserData();
+      setState(() {
+        dataGet = true;
+      });
+    }
   }
 
-  void changeUserImageBottomSheet(String imagePath) {
-    showCupertinoModalBottomSheet<bool>(
+  void changeUserImageBottomSheet(String imagePath) async{
+    final result = await showCupertinoModalBottomSheet<String>(
       topRadius: const Radius.circular(40),
       backgroundColor: colors.scaffoldColor,
       context: context,
@@ -361,6 +420,18 @@ class UserScreenState extends State<UserScreen>{
         return UserChangeAvatarBottomSheet(imagePath: imagePath,);
       },
     );
+    if(result!=null){
+      print("Result image : $result");
+      Navigator.of(context).pop();
+      setState(() {
+        dataGet = false;
+      });
+      await updateUserImage(result);
+      await getUserData();
+      setState(() {
+        dataGet = true;
+      });
+    }
   }
 
   void showPolicyAndPrivacyBottomSheetData(){
@@ -476,6 +547,118 @@ class UserScreenState extends State<UserScreen>{
     );
   }
 
+  Future<void> getUserData() async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.get(endpoints.userInfoGetEndpoint);
+      if(response.statusCode == 200){
+        final result = userDataClassFromJson(response.toString());
+        user = result;
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> updateUserName(String newName) async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.put(
+          endpoints.updateUserInfoPutEndpoint,
+          data: {
+            "full_name" : newName
+          }
+      );
+      if(response.statusCode == 200){}
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> updateUserImage(String imagePath) async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    FormData formData = FormData.fromMap({
+      "image" : await MultipartFile.fromFile(imagePath, filename: imagePath.split('/').last)
+    });
+    try{
+      final response = await dio.put(
+          endpoints.updateUserInfoPutEndpoint,
+          data: formData
+      );
+      print(response);
+      print(response.statusCode);
+      if(response.statusCode == 200){}
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> initVoid() async{
+    await getUserData();
+    setState(() {
+      dataGet = true;
+    });
+  }
 
   @override
   void dispose() {
@@ -485,6 +668,7 @@ class UserScreenState extends State<UserScreen>{
   @override
   void initState() {
     super.initState();
+    initVoid();
   }
 
 
@@ -499,7 +683,8 @@ class UserScreenState extends State<UserScreen>{
         width: width,
         height: height,
         color: colors.scaffoldColor,
-        child: Padding(
+        child: (dataGet)?
+        Padding(
             padding: EdgeInsets.only(top: statusBarHeight),
             child: SingleChildScrollView(
               padding: EdgeInsets.zero,
@@ -511,16 +696,55 @@ class UserScreenState extends State<UserScreen>{
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 15,),
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade500
+                    SizedBox(
+                      width: width/3,
+                      height: width/3,
+                      child: CachedNetworkImage(
+                        imageUrl: "${endpoints.mainPath}/${user!.image!}",
+                        progressIndicatorBuilder: (context, url, downloadProgress) {
+                          return Center(
+                            child: Container(
+                              width: width,
+                              height: height / 3,
+                              color: Colors.grey.shade200,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        imageBuilder: (context, imageProvider) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: InstaImageViewer(
+                              child: Image(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                filterQuality: FilterQuality.high,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 15,),
-                    Text("User name here", style: GoogleFonts.roboto(textStyle: TextStyle()),),
+                    Text(
+                      user!.fullName!,
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.01,
+                        color: colors.darkBlack,
+                      )
+                    ),
                     const SizedBox(height: 30,),
                     GestureDetector(
                       onTap: showUserBottomSheetData,
@@ -553,6 +777,13 @@ class UserScreenState extends State<UserScreen>{
                 ),
               ),
             ),
+        )
+            :
+        Center(
+          child: CupertinoActivityIndicator(
+            color: colors.mainColor,
+            radius: 16,
+          ),
         )
       ),
     );

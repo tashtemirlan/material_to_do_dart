@@ -411,7 +411,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                           AppLocalizations.of(context)!.cancel_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none
@@ -424,7 +424,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                           AppLocalizations.of(context)!.apply_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none
@@ -494,7 +494,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                           AppLocalizations.of(context)!.cancel_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none
@@ -507,7 +507,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                           AppLocalizations.of(context)!.apply_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none

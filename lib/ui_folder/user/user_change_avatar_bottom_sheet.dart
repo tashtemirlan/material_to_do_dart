@@ -26,6 +26,7 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
 
   XFile? imageFile;
   FileImage? userChooseImage;
+  String pathImage = "";
 
   Future<void> _pickImages() async {
     final picker = ImagePicker();
@@ -37,6 +38,7 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
         setState(() {
           imageFile = XFile(pickedFile.path);
           userChooseImage = FileImage(userSelectedFile);
+          pathImage = pickedFile.path;
         });
       }
     } else {
@@ -144,13 +146,13 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
     );
   }
 
-  Widget buttonLogin(width){
+  Widget buttonImagesApply(width){
     return SizedBox(
         width: width,
         child: ElevatedButton(
             onPressed: () async{
               if(userChooseImage!=null){
-                print("update image");
+                Navigator.of(context).pop(pathImage);
               }
               else{
                 Navigator.of(context).pop();
@@ -276,6 +278,7 @@ class UserChangeAvatarBottomSheetState extends State<UserChangeAvatarBottomSheet
             const SizedBox(height: 20),
             uploadImagesContainer(width, height),
             const SizedBox(height: 20,),
+            buttonImagesApply(width)
           ],
         ),
       ),

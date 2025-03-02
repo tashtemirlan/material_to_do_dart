@@ -112,7 +112,7 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                             child: Text(
                               mainText ,
                               textAlign: TextAlign.left,
-                              style: TextStyle(fontSize: 14, color: colors.darkBlack1, fontWeight: FontWeight.w400,
+                              style: TextStyle(fontSize: 18, color: colors.darkBlack1, fontWeight: FontWeight.w500,
                               ),
                             ),
                           )

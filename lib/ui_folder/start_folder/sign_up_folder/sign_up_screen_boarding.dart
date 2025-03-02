@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -14,7 +13,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_to_do/ui_folder/start_folder/login_folder/login_screen_boarding.dart';
 import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/policy_screen.dart';
 import 'package:material_to_do/ui_folder/start_folder/sign_up_folder/privacy_screen.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
+
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -54,6 +54,9 @@ class SignUpPageState extends State<SignUpPage> {
 
   XFile? imageFile;
   FileImage? userChooseImage;
+  File? selectedImage;
+  String fileNameUserChoose = "";
+
 
   Widget signUpTextFormFieldName (width){
     return SizedBox(
@@ -471,6 +474,8 @@ class SignUpPageState extends State<SignUpPage> {
         setState(() {
           imageFile = XFile(pickedFile.path);
           userChooseImage = FileImage(userSelectedFile);
+          selectedImage = File(pickedFile.path);
+          fileNameUserChoose = pickedFile.path.split('/').last;
         });
       }
     } else {
@@ -486,7 +491,70 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> signUp(String email , String password, String fullName) async{
-
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    if(selectedImage!=null){
+      try{
+        FormData formData = FormData.fromMap({
+          "full_name" : fullName,
+          "email" : email,
+          "password" : password,
+          "image" : await MultipartFile.fromFile(selectedImage!.path, filename: fileNameUserChoose),
+        });
+        final response = await dio.post(
+            endpoints.signUpPostEndpoint,
+            data: formData
+        );
+        if(response.statusCode == 201){
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.user_created_string,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+            fontSize: 12.0,
+          );
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(
+            builder: (BuildContext context) => const LoginPage(),
+          ));
+        }
+      }
+      catch(error){
+        if(error is DioException){
+          if (error.response != null) {
+            String toParseData = error.response.toString();
+            print(toParseData);
+          }
+        }
+      }
+    }
+    else{
+      try{
+        FormData formData = FormData.fromMap({
+          "full_name" : fullName,
+          "email" : email,
+          "password" : password,
+        });
+        final response = await dio.post(
+            endpoints.signUpPostEndpoint,
+            data: formData
+        );
+        if(response.statusCode == 201){
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(
+            builder: (BuildContext context) => const LoginPage(),
+          ));
+        }
+      }
+      catch(error){
+        if(error is DioException){
+          if (error.response != null) {
+            String toParseData = error.response.toString();
+            print(toParseData);
+          }
+        }
+      }
+    }
   }
 
 

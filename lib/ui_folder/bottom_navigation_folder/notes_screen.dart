@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 import 'package:material_to_do/global_folder/colors.dart' as colors;
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data_class_folder/notes_folder/notes_data_class.dart';
@@ -87,7 +91,6 @@ class NotesScreenState extends State<NotesScreen>{
         );
       }
     }
-
   }
 
   Widget note(){
@@ -95,13 +98,43 @@ class NotesScreenState extends State<NotesScreen>{
   }
 
   Future<void> getNotes() async{
-    print("notes get");
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.get(endpoints.allNotesGetEndpoint);
+      if(response.statusCode == 200){
+        print(response);
+        final result = notesDataClassFromJson(response.toString());
+        list = result;
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> initVoid() async{
     await getNotes();
     setState(() {
-      dataGet = false;
+      dataGet = true;
     });
   }
 

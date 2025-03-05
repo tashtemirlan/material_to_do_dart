@@ -86,5 +86,13 @@
   "user_with_this_email_not_exist_string" : "User with this email not exist!",
   "login_error_string" : "Login and/or password is incorrect!",
   "cant_get_data" : "Can't get data",
-  "user_created_string" : "User created!"
+  "user_created_string" : "User created!",
+  "title_string" : "Title",
+  "description_string" : "Description",
+
+  "note_created_string" : "Note created!",
+  "note_updated_string" : "Note updated!",
+  "note_deleted_string" : "Note deleted!",
+  "delete_note_string" : "Delete note",
+  "accept_delete_note_string" : "Are you sure? Deleted note can't be restored."
 }

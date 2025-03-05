@@ -40,16 +40,19 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
 
   Widget taskGroupSelectWidget(){
     if(taskGroupsList.isEmpty){
-      return Text(
-          AppLocalizations.of(context)!.task_groups_list_empty_string,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.roboto(textStyle: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              letterSpacing: 0.01,
-              decoration: TextDecoration.none
-          ))
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+              AppLocalizations.of(context)!.task_groups_list_empty_string,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.roboto(textStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  letterSpacing: 0.01,
+                  decoration: TextDecoration.none
+              ))
+          ),
       );
     }
     else{

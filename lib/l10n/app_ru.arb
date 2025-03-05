@@ -85,5 +85,13 @@
   "user_with_this_email_not_exist_string" : "Пользователя с такой почтой не существует!",
   "login_error_string" : "Логин и/или пароль неверны!",
   "cant_get_data" : "Не смогли получить данные",
-  "user_created_string" : "Пользователь создан!"
+  "user_created_string" : "Пользователь создан!",
+  "title_string" : "Заголовок",
+  "description_string" : "Описание",
+
+  "note_created_string" : "Заметка создана!",
+  "note_updated_string" : "Заметка обновлена!",
+  "note_deleted_string" : "Заметка удалена!",
+  "delete_note_string" : "Удалить заметку",
+  "accept_delete_note_string" : "Вы уверены? Удаленую заметку нельзя будет восстановить."
 }

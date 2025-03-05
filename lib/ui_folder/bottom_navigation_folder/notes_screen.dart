@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,10 +9,12 @@ import 'package:hive/hive.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:material_to_do/ui_folder/notes_folder/note_page.dart';
 
 import '../../data_class_folder/notes_folder/notes_data_class.dart';
 import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
+import 'create_task_screen.dart';
 
 
 class NotesScreen extends StatefulWidget {
@@ -28,7 +31,15 @@ class NotesScreenState extends State<NotesScreen>{
   bool dataGet = false;
 
   void createNewTask(){
-    print("create new task");
+    Navigator.of(context).push(
+      CupertinoPageRoute(builder: (BuildContext context) => NoteScreen(id: null, creation: true,)),
+    );
+  }
+
+  void readTask(int ID){
+    Navigator.of(context).push(
+      CupertinoPageRoute(builder: (BuildContext context) => NoteScreen(id: ID, creation: false,)),
+    );
   }
 
   Widget notesList(double width){

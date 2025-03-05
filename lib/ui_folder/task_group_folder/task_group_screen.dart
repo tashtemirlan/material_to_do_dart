@@ -14,16 +14,16 @@ import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
 
 
-class NoteScreen extends StatefulWidget {
+class TaskGroupScreen extends StatefulWidget {
   final int? id;
   final bool creation;
-  const NoteScreen({super.key, required this.id, required this.creation});
+  const TaskGroupScreen({super.key, required this.id, required this.creation});
 
   @override
-  NoteScreenState createState() => NoteScreenState();
+  TaskGroupScreenState createState() => TaskGroupScreenState();
 }
 
-class NoteScreenState extends State<NoteScreen>{
+class TaskGroupScreenState extends State<TaskGroupScreen>{
 
   bool dataGet = false;
 
@@ -171,18 +171,18 @@ class NoteScreenState extends State<NoteScreen>{
     textTitleBool = true;
   }
 
-  Future<void> saveNote() async{
+  Future<void> saveTaskGroup() async{
     if(widget.creation == true){
-      await createNote();
+      await createTaskGroup();
     }
     else{
-      await updateNote();
+      await updateTaskGroup();
     }
   }
 
-  Future<void> createNote() async{
+  Future<void> createTaskGroup() async{
     Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_created_string,
+      msg: AppLocalizations.of(context)!.task_group_created_string,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
       backgroundColor: Colors.white, // Background color of the toast
@@ -190,9 +190,9 @@ class NoteScreenState extends State<NoteScreen>{
     );
   }
 
-  Future<void> updateNote() async{
+  Future<void> updateTaskGroup() async{
     Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_updated_string,
+      msg: AppLocalizations.of(context)!.task_group_updated_string,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
       backgroundColor: Colors.white, // Background color of the toast
@@ -200,9 +200,9 @@ class NoteScreenState extends State<NoteScreen>{
     );
   }
 
-  Future<void> deleteNote() async{
+  Future<void> deleteTaskGroup() async{
     Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_deleted_string,
+      msg: AppLocalizations.of(context)!.task_group_deleted_string,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
       backgroundColor: Colors.white, // Background color of the toast
@@ -220,13 +220,13 @@ class NoteScreenState extends State<NoteScreen>{
             borderRadius: BorderRadius.circular(28.0),
           ),
           title: Text(
-              AppLocalizations.of(context)!.delete_note_string , textAlign: TextAlign.center,
+              AppLocalizations.of(context)!.delete_task_group_string , textAlign: TextAlign.center,
               style: GoogleFonts.roboto(textStyle: TextStyle(
                   fontSize: 24, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
               ))
           ),
           content: Text(
-              AppLocalizations.of(context)!.accept_delete_note_string ,  textAlign: TextAlign.start,
+              AppLocalizations.of(context)!.accept_delete_task_group_string ,  textAlign: TextAlign.start,
               style:  GoogleFonts.roboto(textStyle: TextStyle(
                   fontSize: 14, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
               ))
@@ -255,7 +255,7 @@ class NoteScreenState extends State<NoteScreen>{
                   const SizedBox(width: 8,),
                   TextButton(
                       onPressed: () async{
-                        await deleteNote();
+                        await deleteTaskGroup();
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -325,7 +325,6 @@ class NoteScreenState extends State<NoteScreen>{
                         children: [
                           GestureDetector(
                             onTap: () async{
-                              await saveNote();
                               Navigator.of(context).pop();
                             },
                             child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
@@ -333,7 +332,7 @@ class NoteScreenState extends State<NoteScreen>{
                           Spacer(),
                           GestureDetector(
                             onTap: () async{
-                              await saveNote();
+                              await saveTaskGroup();
                             },
                             child: FaIcon(FontAwesomeIcons.floppyDisk, color: colors.mainColor, size: 28,),
                           ),
@@ -348,26 +347,26 @@ class NoteScreenState extends State<NoteScreen>{
                       ),
                       const SizedBox(height: 20,),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: SizedBox(
-                          width: width,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              (widget.creation)?
-                              AppLocalizations.of(context)!.create_note_string
-                                  :
-                              AppLocalizations.of(context)!.edit_note_string ,
-                              style: GoogleFonts.roboto(textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24,
-                                  letterSpacing: 0.01,
-                                  decoration: TextDecoration.none
-                              )),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: SizedBox(
+                            width: width,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                (widget.creation)?
+                                AppLocalizations.of(context)!.create_task_group_string
+                                    :
+                                AppLocalizations.of(context)!.edit_task_group_string ,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
                             ),
                           ),
-                        ),
                       ),
                       const SizedBox(height: 10,),
                       noteTitleWidget(width),

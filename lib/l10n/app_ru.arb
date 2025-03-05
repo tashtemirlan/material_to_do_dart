@@ -89,9 +89,23 @@
   "title_string" : "Заголовок",
   "description_string" : "Описание",
 
+  "create_note_string" : "Создать заметку",
+  "edit_note_string" : "Редактировать заметку",
   "note_created_string" : "Заметка создана!",
   "note_updated_string" : "Заметка обновлена!",
   "note_deleted_string" : "Заметка удалена!",
   "delete_note_string" : "Удалить заметку",
-  "accept_delete_note_string" : "Вы уверены? Удаленую заметку нельзя будет восстановить."
+  "accept_delete_note_string" : "Вы уверены? Удаленую заметку нельзя будет восстановить.",
+
+  "update_task_string" : "Обновить задачу",
+  "delete_task_string" : "Удалить задачу",
+  "accept_delete_task_string" : "Вы уверены? Удаленую задачу нельзя будет восстановить.",
+
+  "create_task_group_string" : "Создать группу задач",
+  "edit_task_group_string" : "Редактировать группу задач",
+  "task_group_created_string" : "Группа задач создана!",
+  "task_group_updated_string" : "Группа задач обновлена!",
+  "task_group_deleted_string" : "Группа задач удалена!",
+  "delete_task_group_string" : "Удалить группу задач",
+  "accept_delete_task_group_string" : "Вы уверены? Удаленую группу задач нельзя будет восстановить."
 }

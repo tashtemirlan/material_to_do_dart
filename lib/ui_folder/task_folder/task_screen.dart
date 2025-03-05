@@ -12,15 +12,15 @@ import '../../data_class_folder/task_group_folder/task_groups_data_class.dart';
 import '../skeleton_folder/skeleton.dart';
 
 
-class CreateTaskScreen extends StatefulWidget {
-  final int position;
-  const CreateTaskScreen({super.key, required this.position});
+class ViewTaskScreen extends StatefulWidget {
+  final int ID;
+  const ViewTaskScreen({super.key, required this.ID});
 
   @override
-  CreateTaskScreenState createState() => CreateTaskScreenState();
+  ViewTaskScreenState createState() => ViewTaskScreenState();
 }
 
-class CreateTaskScreenState extends State<CreateTaskScreen>{
+class ViewTaskScreenState extends State<ViewTaskScreen>{
 
 
   List<TaskGroupsDataClass> taskGroupsList = [];
@@ -37,7 +37,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
   DateTime? startDate;
   DateTime? endDate;
 
-  final formCreateTask = GlobalKey<FormState>();
+  final formUpdateTask = GlobalKey<FormState>();
 
   bool dataGet = false;
 
@@ -161,8 +161,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             fillColor: Colors.white,
             filled: true,
             errorStyle: TextStyle(
-              fontSize: 12,
-              color: colors.errorTextFormFieldColor
+                fontSize: 12,
+                color: colors.errorTextFormFieldColor
             ),
             errorMaxLines: 1,
             suffixIcon: (titleController.text.isEmpty)? const SizedBox() : (titleBool)?
@@ -377,8 +377,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
         width: width,
         child: ElevatedButton(
             onPressed: () async{
-              if(formCreateTask.currentState!.validate()){
-                print("create task");
+              if(formUpdateTask.currentState!.validate()){
+                print("update task");
               }
             },
             style: ButtonStyle(
@@ -397,7 +397,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
-                  AppLocalizations.of(context)!.create_task_string,
+                  AppLocalizations.of(context)!.update_task_string,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(textStyle: const TextStyle(
                       fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600 , letterSpacing: 0.01
@@ -615,12 +615,94 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     return monthsGenitive[month - 1]; // month is 1-based
   }
 
+  void deleteAlertDialog(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28.0),
+          ),
+          title: Text(
+              AppLocalizations.of(context)!.delete_task_string , textAlign: TextAlign.center,
+              style: GoogleFonts.roboto(textStyle: TextStyle(
+                  fontSize: 24, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
+              ))
+          ),
+          content: Text(
+              AppLocalizations.of(context)!.accept_delete_task_string ,  textAlign: TextAlign.start,
+              style:  GoogleFonts.roboto(textStyle: TextStyle(
+                  fontSize: 14, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
+              ))
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: ()async{
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                        child: Text(
+                            AppLocalizations.of(context)!.no_string,
+                            style: TextStyle(
+                                fontSize: 14, color: colors.darkBlack, fontWeight: FontWeight.w500 , letterSpacing: 0.1
+                            )
+                        ),
+                      )
+                  ),
+                  const SizedBox(width: 8,),
+                  TextButton(
+                      onPressed: () async{
+                        await deleteTask();
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                        child: Text(
+                            AppLocalizations.of(context)!.yes_string,
+                            style: GoogleFonts.roboto(textStyle:  TextStyle(
+                                fontSize: 14, color: colors.errorTextFormFieldColor, fontWeight: FontWeight.w500 , letterSpacing: 0.1
+                            ))
+                        ),
+                      )
+                  )
+                ],
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteTask() async{
+
+  }
+
+  Future<void> updateTask() async{
+
+  }
+
+
   Future<void> getTaskGroups() async{
 
   }
 
+  Future<void> getTaskData() async{
+    print("ID : ${widget.ID}");
+  }
+
   Future<void> initVoid() async{
     await getTaskGroups();
+    await getTaskData();
     Future.delayed(Duration(seconds: 3), (){
       setState(() {
         dataGet = true;
@@ -636,7 +718,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
   @override
   void initState() {
     super.initState();
-    initVoid();
   }
 
 
@@ -653,7 +734,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             child: Padding(
               padding: EdgeInsets.only(top: statusBarHeight),
               child: Form(
-                key: formCreateTask,
+                key: formUpdateTask,
                 child: SingleChildScrollView(
                   padding: EdgeInsets.zero,
                   physics: BouncingScrollPhysics(),
@@ -664,28 +745,22 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 5,),
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.of(context).pop();
-                          },
-                          child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 24,),
-                        ),
-                        const SizedBox(height: 10,),
-                        SizedBox(
-                          width: width,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              AppLocalizations.of(context)!.add_task_string,
-                              style: GoogleFonts.roboto(textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24,
-                                  letterSpacing: 0.01,
-                                  decoration: TextDecoration.none
-                              )),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async{
+                                Navigator.of(context).pop();
+                              },
+                              child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
                             ),
-                          ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: (){
+                                deleteAlertDialog();
+                              },
+                              child: FaIcon(FontAwesomeIcons.trashCan, color: colors.errorTextFormFieldColor, size: 28,),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 20,),
                         taskGroupSelectWidget(width),

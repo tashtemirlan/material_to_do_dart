@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:material_to_do/ui_folder/skeleton_folder/skeleton.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../global_folder/globals.dart';
+import '../task_group_folder/task_group_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -83,7 +85,9 @@ class HomeScreenState extends State<HomeScreen>{
         const SizedBox(width: 10,),
         GestureDetector(
           onTap: (){
-            print("create new task group");
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (BuildContext context) => TaskGroupScreen(id: null, creation: true,)),
+            );
           },
           child: CircleAvatar(
             backgroundColor: colors.mainColor,

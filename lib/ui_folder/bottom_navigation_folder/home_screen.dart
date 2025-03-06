@@ -53,19 +53,19 @@ class HomeScreenState extends State<HomeScreen>{
     });
   }
 
-  Widget userRow(){
+  Widget userRow(double width){
     return Container();
   }
 
-  Widget todayProgress(){
+  Widget todayProgress(double width){
     return Container();
   }
 
-  Widget toDoTasks(){
+  Widget toDoTasks(double width){
     return Container();
   }
 
-  Widget inProgressTasks(){
+  Widget inProgressTasks(double width){
     return Container();
   }
 
@@ -99,7 +99,7 @@ class HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Widget tasksGroupsList(){
+  Widget tasksGroupsList(double width){
     return Container();
   }
 
@@ -138,17 +138,51 @@ class HomeScreenState extends State<HomeScreen>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 15,),
-                  userRow(),
+                  userRow(width),
                   const SizedBox(height: 20,),
-                  todayProgress(),
+                  todayProgress(width),
                   const SizedBox(height: 20,),
-                  toDoTasks(),
+                  SizedBox(
+                    width: width,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)!.to_do_string ,
+                        style: GoogleFonts.roboto(textStyle: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            letterSpacing: 0.01,
+                            decoration: TextDecoration.none
+                        )),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  toDoTasks(width),
                   const SizedBox(height: 20,),
-                  inProgressTasks(),
+                  SizedBox(
+                    width: width,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)!.in_progress_string ,
+                        style: GoogleFonts.roboto(textStyle: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            letterSpacing: 0.01,
+                            decoration: TextDecoration.none
+                        )),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  inProgressTasks(width),
                   const SizedBox(height: 20,),
                   tasksGroupsRow(),
                   const SizedBox(height: 20,),
-                  tasksGroupsList(),
+                  tasksGroupsList(width),
                   SizedBox(height: bottomNavBarHeight+40,)
                 ],
               ),

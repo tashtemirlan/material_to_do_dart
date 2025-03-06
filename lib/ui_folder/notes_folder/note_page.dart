@@ -32,6 +32,8 @@ class NoteScreenState extends State<NoteScreen>{
   bool textTitleBool = false;
   bool textDescriptionBool = false;
 
+  final formNote = GlobalKey<FormState>();
+
   Widget noteTitleWidget(double width){
     return SizedBox(
       width: width,
@@ -76,13 +78,13 @@ class NoteScreenState extends State<NoteScreen>{
         ),
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
-          if(value!.length < 5){
+          if(value!.isEmpty){
             return AppLocalizations.of(context)!.empty_field_string;
           }
           return null;
         },
         onChanged: (val){
-          if(val.length<2){
+          if(val.isEmpty){
             setState(() {
               textTitleBool = false;
             });
@@ -143,13 +145,13 @@ class NoteScreenState extends State<NoteScreen>{
         ),
         style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 16 , fontWeight: FontWeight.w600 , color: colors.darkBlack)),
         validator: (String?value){
-          if(value!.length < 2){
+          if(value!.isEmpty){
             return AppLocalizations.of(context)!.empty_field_string;
           }
           return null;
         },
         onChanged: (val){
-          if(val.length<5){
+          if(val.isEmpty){
             setState(() {
               textDescriptionBool = false;
             });
@@ -172,11 +174,13 @@ class NoteScreenState extends State<NoteScreen>{
   }
 
   Future<void> saveNote() async{
-    if(widget.creation == true){
-      await createNote();
-    }
-    else{
-      await updateNote();
+    if(formNote.currentState!.validate()){
+      if(widget.creation == true){
+        await createNote();
+      }
+      else{
+        await updateNote();
+      }
     }
   }
 
@@ -311,70 +315,73 @@ class NoteScreenState extends State<NoteScreen>{
             color: colors.scaffoldColor,
             child: Padding(
               padding: EdgeInsets.only(top: statusBarHeight),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.zero,
-                physics: BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 15,),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async{
-                              await saveNote();
-                              Navigator.of(context).pop();
-                            },
-                            child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: () async{
-                              await saveNote();
-                            },
-                            child: FaIcon(FontAwesomeIcons.floppyDisk, color: colors.mainColor, size: 28,),
-                          ),
-                          const SizedBox(width: 20,),
-                          GestureDetector(
-                            onTap: (){
-                              deleteAlertDialog();
-                            },
-                            child: FaIcon(FontAwesomeIcons.trashCan, color: colors.errorTextFormFieldColor, size: 28,),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20,),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: SizedBox(
-                          width: width,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              (widget.creation)?
-                              AppLocalizations.of(context)!.create_note_string
-                                  :
-                              AppLocalizations.of(context)!.edit_note_string ,
-                              style: GoogleFonts.roboto(textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24,
-                                  letterSpacing: 0.01,
-                                  decoration: TextDecoration.none
-                              )),
+              child: Form(
+                key: formNote,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.zero,
+                  physics: BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 15,),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async{
+                                await saveNote();
+                                Navigator.of(context).pop();
+                              },
+                              child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () async{
+                                await saveNote();
+                              },
+                              child: FaIcon(FontAwesomeIcons.floppyDisk, color: colors.mainColor, size: 28,),
+                            ),
+                            const SizedBox(width: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                deleteAlertDialog();
+                              },
+                              child: FaIcon(FontAwesomeIcons.trashCan, color: colors.errorTextFormFieldColor, size: 28,),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20,),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: SizedBox(
+                            width: width,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                (widget.creation)?
+                                AppLocalizations.of(context)!.create_note_string
+                                    :
+                                AppLocalizations.of(context)!.edit_note_string ,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10,),
-                      noteTitleWidget(width),
-                      const SizedBox(height: 20,),
-                      noteDescriptionWidget(width),
-                      SizedBox(height: bottomNavBarHeight+40,)
-                    ],
+                        const SizedBox(height: 10,),
+                        noteTitleWidget(width),
+                        const SizedBox(height: 20,),
+                        noteDescriptionWidget(width),
+                        SizedBox(height: bottomNavBarHeight+40,)
+                      ],
+                    ),
                   ),
                 ),
               ),

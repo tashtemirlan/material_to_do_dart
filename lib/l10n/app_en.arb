@@ -108,5 +108,10 @@
   "task_group_updated_string" : "Task group updated!",
   "task_group_deleted_string" : "Task group deleted!",
   "delete_task_group_string" : "Delete task group",
-  "accept_delete_task_group_string" : "Are you sure? Deleted task group can't be restored."
+  "accept_delete_task_group_string" : "Are you sure? Deleted task group can't be restored.",
+
+  "icon_color_string" : "Icon color",
+  "background_color_string" : "Background color",
+  "icon_string" : "Icon",
+  "pick_color_string" : "Pick color"
 }

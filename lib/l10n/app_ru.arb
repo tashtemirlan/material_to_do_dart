@@ -107,5 +107,10 @@
   "task_group_updated_string" : "Группа задач обновлена!",
   "task_group_deleted_string" : "Группа задач удалена!",
   "delete_task_group_string" : "Удалить группу задач",
-  "accept_delete_task_group_string" : "Вы уверены? Удаленую группу задач нельзя будет восстановить."
+  "accept_delete_task_group_string" : "Вы уверены? Удаленую группу задач нельзя будет восстановить.",
+
+  "icon_color_string" : "Цвет иконки",
+  "background_color_string" : "Цвет фона",
+  "icon_string" : "Иконка",
+  "pick_color_string" : "Выберите цвет"
 }

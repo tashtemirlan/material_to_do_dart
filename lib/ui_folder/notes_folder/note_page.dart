@@ -9,7 +9,7 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../data_class_folder/notes_folder/notes_data_class.dart';
+import '../../data_class_folder/notes_folder/note_data_class.dart';
 import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
 
@@ -31,6 +31,8 @@ class NoteScreenState extends State<NoteScreen>{
   TextEditingController textDescriptionController = TextEditingController();
   bool textTitleBool = false;
   bool textDescriptionBool = false;
+
+  bool noteHasBeenUpdated = false;
 
   final formNote = GlobalKey<FormState>();
 
@@ -167,16 +169,47 @@ class NoteScreenState extends State<NoteScreen>{
   }
 
   Future<void> getNoteData() async{
-    textTitleController.text = "Title";
-    textDescriptionController.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-    textDescriptionBool = true;
-    textTitleBool = true;
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.get("${endpoints.noteGetEndpoint}${widget.id}");
+      if(response.statusCode == 200){
+        final result = noteDataClassFromJson(response.toString());
+        setState(() {
+          textTitleController.text = result.title ?? "";
+          textDescriptionController.text = result.description ?? "";
+          textDescriptionBool = true;
+          textTitleBool = true;
+        });
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> saveNote() async{
     if(formNote.currentState!.validate()){
       if(widget.creation == true){
         await createNote();
+        Navigator.pop(context, "updating");
       }
       else{
         await updateNote();
@@ -185,33 +218,127 @@ class NoteScreenState extends State<NoteScreen>{
   }
 
   Future<void> createNote() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_created_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.post(
+          endpoints.createNotePostEndpoint ,
+          data: {
+            "title" : textTitleController.text,
+            "description" : textDescriptionController.text
+          }
+      );
+      if(response.statusCode == 201){
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.note_created_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+          backgroundColor: Colors.white, // Background color of the toast
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> updateNote() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_updated_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.put(
+          "${endpoints.updateNotePutEndpoint}${widget.id}",
+          data: {
+            "title" : textTitleController.text,
+            "description" : textDescriptionController.text
+          }
+      );
+      if(response.statusCode == 200){
+        noteHasBeenUpdated = true;
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.note_updated_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+          backgroundColor: Colors.white, // Background color of the toast
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> deleteNote() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.note_deleted_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.delete("${endpoints.deleteNoteDeleteEndpoint}${widget.id}");
+      if(response.statusCode == 200){
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.note_deleted_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+          backgroundColor: Colors.white, // Background color of the toast
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
+            backgroundColor: Colors.white, // Background color of the toast
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   void deleteAlertDialog(){
@@ -261,7 +388,7 @@ class NoteScreenState extends State<NoteScreen>{
                       onPressed: () async{
                         await deleteNote();
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context, "Update");
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -331,8 +458,12 @@ class NoteScreenState extends State<NoteScreen>{
                           children: [
                             GestureDetector(
                               onTap: () async{
-                                await saveNote();
-                                Navigator.of(context).pop();
+                                if(noteHasBeenUpdated){
+                                  Navigator.pop(context, "updating");
+                                }
+                                else{
+                                  Navigator.of(context).pop();
+                                }
                               },
                               child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
                             ),

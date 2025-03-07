@@ -30,16 +30,34 @@ class NotesScreenState extends State<NotesScreen>{
 
   bool dataGet = false;
 
-  void createNewTask(){
-    Navigator.of(context).push(
+  void createNewTask() async{
+    final result = await Navigator.of(context).push(
       CupertinoPageRoute(builder: (BuildContext context) => NoteScreen(id: null, creation: true,)),
     );
+    if(result!=null){
+      setState(() {
+        dataGet = false;
+      });
+      await getNotes();
+      setState(() {
+        dataGet = true;
+      });
+    }
   }
 
-  void readTask(int ID){
-    Navigator.of(context).push(
+  void readTask(int ID) async {
+    final result = await Navigator.of(context).push(
       CupertinoPageRoute(builder: (BuildContext context) => NoteScreen(id: ID, creation: false,)),
     );
+    if(result!=null){
+      setState(() {
+        dataGet = false;
+      });
+      await getNotes();
+      setState(() {
+        dataGet = true;
+      });
+    }
   }
 
   Widget notesList(double width){
@@ -67,15 +85,17 @@ class NotesScreenState extends State<NotesScreen>{
     }
     else{
       if(list.isEmpty){
-        return Text(
-          AppLocalizations.of(context)!.notes_list_empty_string,
-          style: GoogleFonts.roboto(textStyle: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w400,
-              fontSize: 18,
-              letterSpacing: 0.01,
-              decoration: TextDecoration.none
-          )),
+        return Center(
+          child: Text(
+            AppLocalizations.of(context)!.notes_list_empty_string,
+            style: GoogleFonts.roboto(textStyle: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontSize: 24,
+                letterSpacing: 0.01,
+                decoration: TextDecoration.none
+            )),
+          )
         );
       }
       else{
@@ -90,11 +110,46 @@ class NotesScreenState extends State<NotesScreen>{
               itemBuilder: (context, index){
                 return GestureDetector(
                   onTap: (){
-                    print("open task");
+                    readTask(list[index].notesDataClassId!);
                   },
                   child: Padding(
-                    padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(top: 5),
-                    child: Container(),
+                    padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(top: 10),
+                    child: Container(
+                      width: width,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                list[index].title!,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 22,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
+                              const SizedBox(height: 5,),
+                              Text(
+                                list[index].description!,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 14,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              )
+                            ],
+                          ),
+                      ),
+                    ),
                   ),
                 );
               }
@@ -112,15 +167,15 @@ class NotesScreenState extends State<NotesScreen>{
     final dio = Dio();
     dio.options.receiveTimeout = Duration(seconds: 30);
     dio.options.connectTimeout = Duration(seconds: 30);
-
     var box = await Hive.openBox("auth");
     final token = box.get("token");
     dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.responseType = ResponseType.plain;
     //set Dio response =>
     try{
       final response = await dio.get(endpoints.allNotesGetEndpoint);
+      print(response);
       if(response.statusCode == 200){
-        print(response);
         final result = notesDataClassFromJson(response.toString());
         list = result;
       }

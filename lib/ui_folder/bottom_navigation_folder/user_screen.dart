@@ -171,8 +171,8 @@ class UserScreenState extends State<UserScreen>{
                 ),
                 const SizedBox(height: 10,),
                 SizedBox(
-                  width: width/3,
-                  height: width/3,
+                  width: width/2,
+                  height: width/2,
                   child: CachedNetworkImage(
                     imageUrl: "${endpoints.mainPath}/${user!.image!}",
                     progressIndicatorBuilder: (context, url, downloadProgress) {

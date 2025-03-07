@@ -57,7 +57,7 @@
   "password_reset_description_string" : "Now you can log in via new credentials.",
 
   "notes_string" : "Notes",
-  "notes_list_empty_string" : "Notes list are empty",
+  "notes_list_empty_string" : "Notes list are empty \uD83D\uDE22",
 
   "add_task_string" : "Add task",
   "task_group_string" : "Task group",

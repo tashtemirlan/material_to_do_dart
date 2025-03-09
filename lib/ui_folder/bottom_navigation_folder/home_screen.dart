@@ -15,7 +15,10 @@ import 'package:material_to_do/ui_folder/skeleton_folder/skeleton.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data_class_folder/task_group_folder/task_groups_data_class.dart';
+import '../../data_class_folder/tasks_folder/date_tasks_data_class.dart';
+import '../../data_class_folder/tasks_folder/to_do_tasks_data_class.dart';
 import '../../global_folder/globals.dart';
+import '../task_folder/task_screen.dart';
 import '../task_group_folder/task_group_screen.dart';
 
 
@@ -33,9 +36,14 @@ class HomeScreenState extends State<HomeScreen>{
   List<TaskGroupsDataClass> listTaskGroups = [];
   bool anyToDoTasks = true;
   bool anyInProgressTasks = true;
-  int percentageUserTodayCompleted = 0;
+  double percentageUserTodayCompleted = 0;
 
   UserDataClass? user;
+
+  List<TaskDate>  listTaskDate = [];
+  List<TodoTasksDataClass> listToDoTasks = [];
+  List<TodoTasksDataClass> listInProgressToDoTasks = [];
+
 
   Future<void> getUserData() async{
     final dio = Dio();
@@ -81,15 +89,21 @@ class HomeScreenState extends State<HomeScreen>{
     String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     //set Dio response =>
     try{
-      print("${endpoints.taskByDateGetEndpoint}?finish_date=$formattedDate");
       final response = await dio.get(
         "${endpoints.taskByDateGetEndpoint}?finish_date=$formattedDate"
       );
       print("Response for today tasks : $response");
       if(response.statusCode == 200){
-        if(response.data == "null"){}
-        else{
-          print("we got today stats");
+        final result = dateTasksDataClassFromJson(response.toString());
+        int completedTasks = 0;
+        if(result.tasks!.isNotEmpty){
+          listTaskDate = result.tasks!;
+          for(int a=0; a< result.tasks!.length; a++){
+            if(result.tasks![a].status == "COMPLETED"){
+              completedTasks++;
+            }
+          }
+          percentageUserTodayCompleted = completedTasks / result.tasks!.length;
         }
       }
     }
@@ -128,7 +142,9 @@ class HomeScreenState extends State<HomeScreen>{
           anyToDoTasks = false;
         }
         else{
-          print("we got list of objects");
+          final result = todoTasksDataClassFromJson(response.toString());
+          listToDoTasks = result;
+          anyToDoTasks = true;
         }
       }
     }
@@ -167,7 +183,10 @@ class HomeScreenState extends State<HomeScreen>{
           anyInProgressTasks = false;
         }
         else{
-          print("we got list of objects");
+          //Same answer as for to do type so we use same parser
+          final result = todoTasksDataClassFromJson(response.toString());
+          listInProgressToDoTasks = result;
+          anyInProgressTasks = true;
         }
       }
     }
@@ -199,7 +218,6 @@ class HomeScreenState extends State<HomeScreen>{
     //set Dio response =>
     try{
       final response = await dio.get(endpoints.allTaskGroupsGetEndpoint);
-      print("Tasks groups data : $response");
       if(response.statusCode == 200){
         final result = taskGroupsDataClassFromJson(response.toString());
         listTaskGroups = result;
@@ -223,6 +241,20 @@ class HomeScreenState extends State<HomeScreen>{
   }
 
   Future<void> initVoid() async{
+    await getUserData();
+    await getTodayTasks();
+    await getToDoTasks();
+    await getInProgressTasks();
+    await getTasksGroups();
+    setState(() {
+      dataGet = true;
+    });
+  }
+
+  Future<void> update() async{
+    setState(() {
+      dataGet = false;
+    });
     await getUserData();
     await getTodayTasks();
     await getToDoTasks();
@@ -340,7 +372,7 @@ class HomeScreenState extends State<HomeScreen>{
     }
   }
 
-  String getStageCompletion(int percentage){
+  String getStageCompletion(double percentage){
     if(percentage == 0){
       return AppLocalizations.of(context)!.zero_stage_string;
     }
@@ -382,26 +414,6 @@ class HomeScreenState extends State<HomeScreen>{
                         decoration: TextDecoration.none
                     )),
                   ),
-                  const SizedBox(height: 15,),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colors.secondHelpColor,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.view_task_string,
-                          style: GoogleFonts.roboto(textStyle: TextStyle(
-                              color: colors.mainColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              letterSpacing: 0.01,
-                              decoration: TextDecoration.none
-                          )),
-                        )
-                    ),
-                  )
                 ],
               ),
               Spacer(),
@@ -414,15 +426,12 @@ class HomeScreenState extends State<HomeScreen>{
                     child: CircularProgressIndicator(
                       color: colors.secondHelpColor,
                       backgroundColor: colors.helpColor,
-                      value: (percentageUserTodayCompleted == 0)? 1 : percentageUserTodayCompleted/ 100,
+                      value: (percentageUserTodayCompleted == 0 && listTaskDate.isEmpty)? 1 : percentageUserTodayCompleted,
                     ),
                   ),
                   Center(
                       child: Text(
-                        (percentageUserTodayCompleted == 0) ?
-                        "100%"
-                            :
-                        "$percentageUserTodayCompleted%",
+                        "${(percentageUserTodayCompleted*100).toInt()}%",
                         style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: colors.secondHelpColor,
                             fontWeight: FontWeight.w500,
@@ -438,6 +447,37 @@ class HomeScreenState extends State<HomeScreen>{
           ),
       ),
     );
+  }
+
+  Widget createIcon(int groupID){
+    TaskGroupsDataClass? ts;
+    for(int a=0 ; a<listTaskGroups.length; a++){
+      if(listTaskGroups[a].id == groupID){
+        ts = listTaskGroups[a];
+        break;
+      }
+    }
+    if(ts !=null){
+      return Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+            color: hexToColor(ts.backgroundColor!),
+            borderRadius: BorderRadius.circular(8)
+        ),
+        child: Align(
+          alignment: Alignment.center,
+          child: FaIcon(IconData(
+            ts.iconData!,
+            fontFamily: 'FontAwesomeSolid',
+            fontPackage: 'font_awesome_flutter',
+          ), color: hexToColor(ts.iconColor!), size: 16,),
+        ),
+      );
+    }
+    else{
+      return const SizedBox();
+    }
   }
 
   Widget toDoTasks(double width){
@@ -464,7 +504,86 @@ class HomeScreenState extends State<HomeScreen>{
         );
       }
       else{
-        return Container();
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: listToDoTasks.asMap().entries.map((entry){
+              int index = entry.key;
+              return GestureDetector(
+                onTap: () async{
+                  final result = await Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (BuildContext context) => ViewTaskScreen(ID: listToDoTasks[index].id!,)),
+                  );
+                  if(result!=null){
+                    await update();
+                  }
+                },
+                child: Padding(
+                  padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(left: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: colors.todoStatusAdditional,
+                        borderRadius: BorderRadius.circular(20)
+                    ),
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: width/2,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: width/2 - 40,
+                                    child: Text(
+                                      listToDoTasks[index].taskGroupName!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.roboto(textStyle: TextStyle(
+                                          color: colors.black2,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          letterSpacing: 0.01,
+                                          decoration: TextDecoration.none
+                                      )),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  createIcon(listToDoTasks[index].taskGroupId!)
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10,),
+                            SizedBox(
+                              width: width/2,
+                              height: 40,
+                              child: Text(
+                                listToDoTasks[index].title!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
+                            )
+                          ],
+                        )
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
       }
     }
     else{
@@ -496,7 +615,86 @@ class HomeScreenState extends State<HomeScreen>{
         );
       }
       else{
-        return Container();
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: listInProgressToDoTasks.asMap().entries.map((entry){
+              int index = entry.key;
+              return GestureDetector(
+                onTap: () async{
+                  final result = await Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (BuildContext context) => ViewTaskScreen(ID: listInProgressToDoTasks[index].id!,)),
+                  );
+                  if(result!=null){
+                    await update();
+                  }
+                },
+                child: Padding(
+                  padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(left: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: colors.inProgressStatusAdditional,
+                        borderRadius: BorderRadius.circular(20)
+                    ),
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: width/2,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: width/2 - 40,
+                                    child: Text(
+                                      listInProgressToDoTasks[index].taskGroupName!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.roboto(textStyle: TextStyle(
+                                          color: colors.black2,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          letterSpacing: 0.01,
+                                          decoration: TextDecoration.none
+                                      )),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  createIcon(listInProgressToDoTasks[index].taskGroupId!)
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10,),
+                            SizedBox(
+                              width: width/2,
+                              height: 40,
+                              child: Text(
+                                listInProgressToDoTasks[index].title!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
+                            )
+                          ],
+                        )
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
       }
     }
     else{
@@ -698,13 +896,13 @@ class HomeScreenState extends State<HomeScreen>{
                                   child: CircularProgressIndicator(
                                     color: hexToColor(listTaskGroups[index].iconColor!),
                                     backgroundColor: hexToColor(listTaskGroups[index].backgroundColor!),
-                                    value: (listTaskGroups[index].completionRate! ==0) ? 1 : listTaskGroups[index].completionRate! / 100,
+                                    value: (listTaskGroups[index].completionRate! ==0 && listTaskGroups[index].totalTasks==0) ? 1 : listTaskGroups[index].completionRate! / 100,
                                     strokeWidth: 4,
                                   ),
                                 ),
                                 Center(
                                     child: Text(
-                                        (listTaskGroups[index].completionRate == 0)?
+                                        (listTaskGroups[index].completionRate == 0 && listTaskGroups[index].totalTasks==0)?
                                         "100%"
                                             :
                                         "${listTaskGroups[index].completionRate}%",
@@ -757,68 +955,73 @@ class HomeScreenState extends State<HomeScreen>{
         color: colors.scaffoldColor,
         child: Padding(
           padding: EdgeInsets.only(top: statusBarHeight),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.zero,
-            physics: BouncingScrollPhysics(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 15,),
-                  userRow(width),
-                  const SizedBox(height: 20,),
-                  todayProgress(width),
-                  (anyToDoTasks)? const SizedBox(height: 20,) : const SizedBox(),
-                  (anyToDoTasks)?
-                  SizedBox(
-                    width: width,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppLocalizations.of(context)!.to_do_string ,
-                        style: GoogleFonts.roboto(textStyle: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                            letterSpacing: 0.01,
-                            decoration: TextDecoration.none
-                        )),
+          child: RefreshIndicator(
+            onRefresh: ()async{
+              await update();
+            },
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 15,),
+                    userRow(width),
+                    const SizedBox(height: 20,),
+                    todayProgress(width),
+                    (anyToDoTasks)? const SizedBox(height: 20,) : const SizedBox(),
+                    (anyToDoTasks)?
+                    SizedBox(
+                      width: width,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppLocalizations.of(context)!.to_do_string ,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          )),
+                        ),
                       ),
-                    ),
-                  )
-                      :
-                  const SizedBox(),
-                  (anyToDoTasks)?  const SizedBox(height: 10,) : const SizedBox(),
-                  toDoTasks(width),
-                  (anyInProgressTasks)? const SizedBox(height: 20,) : const SizedBox(),
-                  (anyInProgressTasks)? SizedBox(
-                    width: width,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppLocalizations.of(context)!.in_progress_string ,
-                        style: GoogleFonts.roboto(textStyle: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                            letterSpacing: 0.01,
-                            decoration: TextDecoration.none
-                        )),
+                    )
+                        :
+                    const SizedBox(),
+                    (anyToDoTasks)?  const SizedBox(height: 10,) : const SizedBox(),
+                    toDoTasks(width),
+                    (anyInProgressTasks)? const SizedBox(height: 20,) : const SizedBox(),
+                    (anyInProgressTasks)? SizedBox(
+                      width: width,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppLocalizations.of(context)!.in_progress_string ,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              letterSpacing: 0.01,
+                              decoration: TextDecoration.none
+                          )),
+                        ),
                       ),
-                    ),
-                  )
-                      :
-                  const SizedBox(),
-                  (anyInProgressTasks)? const SizedBox(height: 10,) : const SizedBox(),
-                  inProgressTasks(width),
-                  const SizedBox(height: 20,),
-                  tasksGroupsRow(),
-                  const SizedBox(height: 20,),
-                  tasksGroupsList(width),
-                  SizedBox(height: bottomNavBarHeight+40,)
-                ],
+                    )
+                        :
+                    const SizedBox(),
+                    (anyInProgressTasks)? const SizedBox(height: 10,) : const SizedBox(),
+                    inProgressTasks(width),
+                    const SizedBox(height: 20,),
+                    tasksGroupsRow(),
+                    const SizedBox(height: 20,),
+                    tasksGroupsList(width),
+                    SizedBox(height: bottomNavBarHeight+40,)
+                  ],
+                ),
               ),
             ),
           ),

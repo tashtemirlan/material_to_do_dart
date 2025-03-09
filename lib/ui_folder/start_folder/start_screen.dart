@@ -35,10 +35,8 @@ class SplashScreenState extends State<SplashScreen>{
   Future<void> checkTokensAuth() async{
     var box = await Hive.openBox("auth");
     bool accessTokenBoolean = box.containsKey("token");
-    print("token is here : $accessTokenBoolean");
     if(accessTokenBoolean == true){
       final accessToken = box.get("token");
-      print("Access token : $accessToken");
       final isTokensValid = await checkValidUserToken(accessToken);
       if(isTokensValid){
         //if tokens are valid then we navigate user to screen with his pin number or face id

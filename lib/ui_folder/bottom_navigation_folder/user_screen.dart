@@ -421,7 +421,6 @@ class UserScreenState extends State<UserScreen>{
       },
     );
     if(result!=null){
-      print("Result image : $result");
       Navigator.of(context).pop();
       setState(() {
         dataGet = false;
@@ -632,8 +631,6 @@ class UserScreenState extends State<UserScreen>{
           endpoints.updateUserInfoPutEndpoint,
           data: formData
       );
-      print(response);
-      print(response.statusCode);
       if(response.statusCode == 200){}
     }
     catch(error){

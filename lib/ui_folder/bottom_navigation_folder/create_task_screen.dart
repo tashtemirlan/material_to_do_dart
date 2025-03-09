@@ -782,7 +782,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     //set Dio response =>
     try{
       final response = await dio.get(endpoints.allTaskGroupsGetEndpoint);
-      print("Tasks groups data : $response");
       if(response.statusCode == 200){
         final result = taskGroupsDataClassFromJson(response.toString());
         listTaskGroups = result;
@@ -840,7 +839,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
             "status": "TODO"
           }
       );
-      print("Tasks groups data : $response");
       if(response.statusCode == 201){
         Fluttertoast.showToast(
           msg: AppLocalizations.of(context)!.task_created_string,

@@ -1,12 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
 import 'package:material_to_do/global_folder/colors.dart' as colors;
-
-import '../../data_class_folder/tasks/tasks_data_class.dart';
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
+import '../../data_class_folder/tasks_folder/date_tasks_data_class.dart';
 import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
 import '../task_folder/task_screen.dart';
@@ -26,12 +29,51 @@ class CalendarScreenState extends State<CalendarScreen>{
   bool dataGet = false;
 
   List<String> statusList = [];
-  List<TasksDataClass> list = [];
+  List<TaskDate>  list = [];
+  List<TaskDate> filteredList = [];
 
   int selectedIndexStatus = 0;
 
   Future<void> getTodayTasks() async{
-
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.responseType = ResponseType.plain;
+    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDateTime);
+    //set Dio response =>
+    try{
+      final response = await dio.get(
+          "${endpoints.taskByDateGetEndpoint}?finish_date=$formattedDate"
+      );
+      if(response.statusCode == 200){
+        if(response.data == "null"){}
+        else{
+          final result = dateTasksDataClassFromJson(response.toString());
+          if(result.tasks != null){
+            list = result.tasks!;
+            filteredList = result.tasks!;
+          }
+        }
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> fillStatusList() async{
@@ -61,10 +103,11 @@ class CalendarScreenState extends State<CalendarScreen>{
         children: statusList.asMap().entries.map((entry){
           int index = entry.key;
           return GestureDetector(
-            onTap: (){
+            onTap: () async{
               setState(() {
                 selectedIndexStatus = index;
               });
+              await filterByStatus(selectedIndexStatus);
             },
             child: Padding(
               padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(left: 5),
@@ -94,6 +137,98 @@ class CalendarScreenState extends State<CalendarScreen>{
     );
   }
 
+  Future<void> filterByStatus(int pos) async{
+    if(pos ==0){
+      //show all :
+      setState(() {
+        filteredList = list;
+      });
+    }
+    else if(pos == 1){
+      final filteredDataList = list.where((item){
+        return item.status == "TODO";
+      }).toList();
+      setState(() {
+        filteredList = filteredDataList;
+      });
+    }
+    else if(pos == 2){
+      final filteredDataList = list.where((item){
+        return item.status == "IN PROGRESS";
+      }).toList();
+      setState(() {
+        filteredList = filteredDataList;
+      });
+    }
+    else{
+      final filteredDataList = list.where((item){
+        return item.status == "COMPLETED";
+      }).toList();
+      setState(() {
+        filteredList = filteredDataList;
+      });
+    }
+  }
+
+  Future<void> update() async{
+    setState(() {
+      dataGet = false;
+    });
+    await getTodayTasks();
+    setState(() {
+      dataGet = true;
+    });
+  }
+
+  // Convert a Hex string to Color
+  static Color hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) {
+      hex = 'FF$hex'; // Add full opacity if only RGB is provided
+    }
+    int a = int.parse(hex.substring(0, 2), radix: 16);
+    int r = int.parse(hex.substring(2, 4), radix: 16);
+    int g = int.parse(hex.substring(4, 6), radix: 16);
+    int b = int.parse(hex.substring(6, 8), radix: 16);
+    return Color.fromRGBO(r, g, b, a / 255.0);
+  }
+
+  Widget statusTaskWidget(TaskDate task){
+    if(task.status == "TODO"){
+      return statusContainerWidget(colors.todoStatusMain, colors.todoStatusAdditional, AppLocalizations.of(context)!.to_do_string);
+    }
+    else if(task.status == "IN PROGRESS"){
+      return statusContainerWidget(colors.inProgressStatusMain, colors.inProgressStatusAdditional, AppLocalizations.of(context)!.in_progress_string);
+    }
+    else{
+      return statusContainerWidget(colors.doneStatusMain, colors.doneStatusAdditional, AppLocalizations.of(context)!.completed_string);
+    }
+  }
+
+  Widget statusContainerWidget(Color mainColor, Color additionalColor , String text){
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: additionalColor
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 5 , horizontal: 8
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.roboto(textStyle: TextStyle(
+              color: mainColor,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              letterSpacing: 0.01,
+              decoration: TextDecoration.none
+          )),
+        ),
+      ),
+    );
+  }
+
   Widget tasksWidgets(double width) {
     if(dataGet == false){
       return SizedBox(
@@ -118,7 +253,7 @@ class CalendarScreenState extends State<CalendarScreen>{
       );
     }
     else{
-      if(list.isEmpty){
+      if(filteredList.isEmpty){
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: SizedBox(
@@ -146,18 +281,93 @@ class CalendarScreenState extends State<CalendarScreen>{
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
-              itemCount: list.length,
+              itemCount: filteredList.length,
               padding: const EdgeInsets.all(0),
               itemBuilder: (context, index){
                 return GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).push(
+                  onTap: () async{
+                    final result = await  Navigator.of(context).push(
                       CupertinoPageRoute(builder: (BuildContext context) => ViewTaskScreen(ID: list[index].id!,)),
                     );
+                    if(result!=null){
+                      await update();
+                    }
                   },
                   child: Padding(
                     padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(top: 5),
-                    child: Container(),
+                    child: Container(
+                      width: width,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: width/2,
+                                    child: Text(
+                                      filteredList[index].taskGroupName!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.roboto(textStyle: TextStyle(
+                                          color: colors.black2,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18,
+                                          letterSpacing: 0.01,
+                                          decoration: TextDecoration.none
+                                      )),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5,),
+                                  SizedBox(
+                                    width: width/2,
+                                    child: Text(
+                                      filteredList[index].title!,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.roboto(textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 22,
+                                          letterSpacing: 0.01,
+                                          decoration: TextDecoration.none
+                                      )),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10,),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      FaIcon(FontAwesomeIcons.clock, color: colors.helpColor, size: 14,),
+                                      const SizedBox(width: 5,),
+                                      Text(
+                                        filteredList[index].finishDate ==null?
+                                        ""
+                                            :
+                                        "${DateFormat('HH:mm').format(filteredList[index].finishDate!)} |  ${formatDateWithSuffix(filteredList[index].startDate!)} - ${formatDateWithSuffix(filteredList[index].finishDate!)}",
+                                        style: GoogleFonts.roboto(textStyle: TextStyle(
+                                            color: colors.helpColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            letterSpacing: 0.01,
+                                            decoration: TextDecoration.none
+                                        )),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              Spacer(),
+                              statusTaskWidget(filteredList[index])
+                            ],
+                          ),
+                      ),
+                    ),
                   ),
                 );
               }
@@ -187,8 +397,8 @@ class CalendarScreenState extends State<CalendarScreen>{
                           AppLocalizations.of(context)!.cancel_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none
                           ))
@@ -200,7 +410,7 @@ class CalendarScreenState extends State<CalendarScreen>{
                           AppLocalizations.of(context)!.apply_string,
                           style: GoogleFonts.roboto(textStyle: TextStyle(
                               color: colors.mainColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               letterSpacing: 0.01,
                               decoration: TextDecoration.none
@@ -217,7 +427,7 @@ class CalendarScreenState extends State<CalendarScreen>{
               Expanded(
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                  minimumDate: DateTime.now(),
+                  initialDateTime: selectedDateTime,
                   onDateTimeChanged: (DateTime dateTime) {
                     selectedDateTime = dateTime;
                   },
@@ -319,75 +529,80 @@ class CalendarScreenState extends State<CalendarScreen>{
           color: colors.scaffoldColor,
           child: Padding(
             padding: EdgeInsets.only(top: statusBarHeight),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.zero,
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 15,),
-                    SizedBox(
-                      width: width,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)!.today_tasks_string,
-                          style: GoogleFonts.roboto(textStyle: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 24,
-                              letterSpacing: 0.01,
-                              decoration: TextDecoration.none
-                          )),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20,),
-                    Row(
-                      children: [
-                        Text(
-                            formatDateWithSuffix(selectedDateTime),
+            child: RefreshIndicator(
+              onRefresh: () async{
+                await update();
+              },
+              child: SingleChildScrollView(
+                padding: EdgeInsets.zero,
+                physics: BouncingScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 15,),
+                      SizedBox(
+                        width: width,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)!.today_tasks_string,
                             style: GoogleFonts.roboto(textStyle: TextStyle(
                                 color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 24,
                                 letterSpacing: 0.01,
                                 decoration: TextDecoration.none
-                            ))
+                            )),
+                          ),
                         ),
-                        const SizedBox(width: 20,),
-                        GestureDetector(
-                          onTap: pickUpDate,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: colors.mainColor,
-                              borderRadius: BorderRadius.circular(13)
-                            ),
-                            child: Padding(
+                      ),
+                      const SizedBox(height: 20,),
+                      Row(
+                        children: [
+                          Text(
+                              formatDateWithSuffix(selectedDateTime),
+                              style: GoogleFonts.roboto(textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 22,
+                                  letterSpacing: 0.01,
+                                  decoration: TextDecoration.none
+                              ))
+                          ),
+                          const SizedBox(width: 20,),
+                          GestureDetector(
+                            onTap: pickUpDate,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: colors.mainColor,
+                                  borderRadius: BorderRadius.circular(13)
+                              ),
+                              child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                                 child: Text(
                                     AppLocalizations.of(context)!.pick_date_string,
                                     style: GoogleFonts.roboto(textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                    letterSpacing: 0.01,
-                                    decoration: TextDecoration.none
-                                ))),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                        letterSpacing: 0.01,
+                                        decoration: TextDecoration.none
+                                    ))),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20,),
-                    statusesWidget(width),
-                    const SizedBox(height: 10,),
-                    tasksWidgets(width),
-                    SizedBox(height: bottomNavBarHeight+40,)
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 20,),
+                      statusesWidget(width),
+                      const SizedBox(height: 10,),
+                      tasksWidgets(width),
+                      SizedBox(height: bottomNavBarHeight+40,)
+                    ],
+                  ),
                 ),
               ),
             ),

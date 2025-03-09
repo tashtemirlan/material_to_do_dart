@@ -31,3 +31,12 @@ Color darkBlack1 = const Color.fromRGBO(48, 48, 48, 1);
 Color pureDarkColor = const Color.fromRGBO(0, 0, 0, 1);
 
 Color shimmerColor = Colors.grey.shade400;
+
+Color doneStatusMain = Color.fromRGBO(108, 67, 227, 1);
+Color doneStatusAdditional = Color.fromRGBO(237, 232, 255, 1);
+
+Color todoStatusMain = Color.fromRGBO(0, 135, 255, 1);
+Color todoStatusAdditional = Color.fromRGBO(227, 242, 255, 1);
+
+Color inProgressStatusMain = Color.fromRGBO(255, 125, 83, 1);
+Color inProgressStatusAdditional = Color.fromRGBO(255, 233, 225, 1);

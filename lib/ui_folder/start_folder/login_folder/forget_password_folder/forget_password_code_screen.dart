@@ -171,8 +171,8 @@ class ForgetPasswordCodeScreenState extends State<ForgetPasswordCodeScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.user_with_this_email_not_exist_string,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -202,8 +202,8 @@ class ForgetPasswordCodeScreenState extends State<ForgetPasswordCodeScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.new_code_send,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
           _startTimer();
@@ -218,8 +218,8 @@ class ForgetPasswordCodeScreenState extends State<ForgetPasswordCodeScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.user_with_this_email_not_exist_string,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -318,8 +318,8 @@ class ForgetPasswordCodeScreenState extends State<ForgetPasswordCodeScreen>{
                                               Fluttertoast.showToast(
                                                 msg: AppLocalizations.of(context)!.code_not_right,
                                                 toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-                                                backgroundColor: Colors.white, // Background color of the toast
+                                                gravity: ToastGravity.BOTTOM,
+                                                backgroundColor: Colors.white,
                                                 textColor: Colors.black,
                                               );
                                             }

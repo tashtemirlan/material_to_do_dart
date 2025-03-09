@@ -9,6 +9,7 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import '../../data_class_folder/tasks/tasks_data_class.dart';
 import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
+import '../task_folder/task_screen.dart';
 
 
 class CalendarScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class CalendarScreenState extends State<CalendarScreen>{
     await getTodayTasks();
     await fillStatusList();
     setState(() {
-      dataGet = false;
+      dataGet = true;
     });
   }
 
@@ -118,17 +119,24 @@ class CalendarScreenState extends State<CalendarScreen>{
     }
     else{
       if(list.isEmpty){
-        return Center(
-          child: Text(
-            AppLocalizations.of(context)!.tasks_list_empty,
-            style: GoogleFonts.roboto(textStyle: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 22,
-                letterSpacing: 0.01,
-                decoration: TextDecoration.none
-            )),
-          ),
+        return Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: SizedBox(
+              width: width,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  AppLocalizations.of(context)!.tasks_list_empty,
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 22,
+                      letterSpacing: 0.01,
+                      decoration: TextDecoration.none
+                  )),
+                ),
+              ),
+            ),
         );
       }
       else{
@@ -143,7 +151,9 @@ class CalendarScreenState extends State<CalendarScreen>{
               itemBuilder: (context, index){
                 return GestureDetector(
                   onTap: (){
-                    print("open task");
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(builder: (BuildContext context) => ViewTaskScreen(ID: list[index].id!,)),
+                    );
                   },
                   child: Padding(
                     padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(top: 5),
@@ -220,7 +230,12 @@ class CalendarScreenState extends State<CalendarScreen>{
     );
     if(selectDate!=null){
       setState(() {
+        dataGet = false;
         selectedDateTime = selectDate;
+      });
+      await getTodayTasks();
+      setState(() {
+        dataGet = true;
       });
     }
   }

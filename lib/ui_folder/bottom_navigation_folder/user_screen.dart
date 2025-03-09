@@ -571,8 +571,8 @@ class UserScreenState extends State<UserScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.cant_get_data,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -606,8 +606,8 @@ class UserScreenState extends State<UserScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.cant_get_data,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -644,8 +644,8 @@ class UserScreenState extends State<UserScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.cant_get_data,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }

@@ -51,3 +51,6 @@ String allTasksGetEndpoint = "$mainPath/api/tasks/getAllTasks";
 String taskGetEndpoint = "$mainPath/api/tasks/getTask/";
 String updateTaskPutEndpoint = "$mainPath/api/tasks/updateTask/";
 String deleteTaskDeleteEndpoint = "$mainPath/api/tasks/deleteTask/";
+String toDOTasksGroupGetEndpoint = "$mainPath/api/tasks/getTasks/todo";
+String inProgressTasksGroupGetEndpoint = "$mainPath/api/tasks/getTasks/in_progress";
+String taskByDateGetEndpoint = "$mainPath/api/tasks/getTask/finish-date";

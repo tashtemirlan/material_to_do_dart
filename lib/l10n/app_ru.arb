@@ -73,7 +73,7 @@
   "task_groups_list_empty_string" : "Список задач групп пустой, пожалуйста создайте одну.",
   "today_tasks_string" : "Задачи на сегодня",
   "pick_date_string" : "Выбрать дату",
-  "tasks_list_empty" : "Задач нет \uD83D\uDE01",
+  "tasks_list_empty" : "Задач нет \uD83E\uDD73",
   "all_string" : "Все",
   "to_do_string" : "Сделать",
   "in_progress_string" : "В прогрессе",
@@ -99,6 +99,10 @@
 
   "update_task_string" : "Обновить задачу",
   "delete_task_string" : "Удалить задачу",
+  "edit_task_string" : "Редактировать задачу",
+  "task_created_string" : "Задача создана!",
+  "task_updated_string" : "Задача обновлена!",
+  "task_deleted_string" : "Задача удалена!",
   "accept_delete_task_string" : "Вы уверены? Удаленую задачу нельзя будет восстановить.",
 
   "create_task_group_string" : "Создать группу задач",
@@ -112,5 +116,15 @@
   "icon_color_string" : "Цвет иконки",
   "background_color_string" : "Цвет фона",
   "icon_string" : "Иконка",
-  "pick_color_string" : "Выберите цвет"
+  "pick_color_string" : "Выберите цвет",
+  "no_any_task_group_string" : "Нет ни одной группы\nДавайте создадим одну \uD83D\uDE0A!",
+  "tasks_string" : "Задач",
+  "view_task_string" : "Показать задачи",
+  "zero_stage_string" : "Давайте начнем!\nЗадачи ждут!",
+  "first_stage_string" : "Вы начали!\nПродолжайте в том же духе!",
+  "second_stage_string" : "Половина пути пройдена!\nВы отлично справляетесь! ",
+  "third_stage_string" : "Почти готово!\nВы почти закончили! ",
+  "fourth_stage_string" : "Поздравляем!\nВы выполнили все задания! ",
+  "welcome_string" : "Здравствуйте!",
+  "select_task_group_string" : "Выберите группу задач"
 }

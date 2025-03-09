@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final taskGroupsDataClass = taskGroupsDataClassFromJson(jsonString);
+
 import 'dart:convert';
 
 List<TaskGroupsDataClass> taskGroupsDataClassFromJson(String str) => List<TaskGroupsDataClass>.from(json.decode(str).map((x) => TaskGroupsDataClass.fromJson(x)));
@@ -6,48 +10,48 @@ String taskGroupsDataClassToJson(List<TaskGroupsDataClass> data) => json.encode(
 
 class TaskGroupsDataClass {
   int? id;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  DateTime? deletedAt;
   String? name;
+  String? description;
   int? iconData;
   String? backgroundColor;
   String? iconColor;
   int? userId;
+  int? totalTasks;
+  int? completionRate;
 
   TaskGroupsDataClass({
     this.id,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
     this.name,
+    this.description,
     this.iconData,
     this.backgroundColor,
     this.iconColor,
     this.userId,
+    this.totalTasks,
+    this.completionRate,
   });
 
   factory TaskGroupsDataClass.fromJson(Map<String, dynamic> json) => TaskGroupsDataClass(
-    id: json["ID"],
-    createdAt: json["CreatedAt"] == null ? null : DateTime.parse(json["CreatedAt"]),
-    updatedAt: json["UpdatedAt"] == null ? null : DateTime.parse(json["UpdatedAt"]),
-    deletedAt: json["DeletedAt"] == null ? null : DateTime.parse(json["DeletedAt"]),
+    id: json["id"],
     name: json["name"],
+    description: json["description"],
     iconData: json["icon_data"],
     backgroundColor: json["background_color"],
     iconColor: json["icon_color"],
     userId: json["user_id"],
+    totalTasks: json["total_tasks"],
+    completionRate: json["completion_rate"],
   );
 
   Map<String, dynamic> toJson() => {
-    "ID": id,
-    "CreatedAt": createdAt?.toIso8601String(),
-    "UpdatedAt": updatedAt?.toIso8601String(),
-    "DeletedAt": deletedAt?.toIso8601String(),
+    "id": id,
     "name": name,
+    "description": description,
     "icon_data": iconData,
     "background_color": backgroundColor,
     "icon_color": iconColor,
     "user_id": userId,
+    "total_tasks": totalTasks,
+    "completion_rate": completionRate,
   };
 }

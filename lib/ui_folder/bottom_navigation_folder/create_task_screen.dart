@@ -1,11 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
+import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 
 import '../../data_class_folder/task_group_folder/task_groups_data_class.dart';
@@ -22,14 +25,10 @@ class CreateTaskScreen extends StatefulWidget {
 
 class CreateTaskScreenState extends State<CreateTaskScreen>{
 
-
-  List<TaskGroupsDataClass> taskGroupsList = [];
-
   TaskGroupsDataClass? selectedTaskGroup;
 
   bool titleBool = false;
   bool descriptionBool = false;
-  bool selectedTaskGroupBool = false;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -41,9 +40,23 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
 
   bool dataGet = false;
 
+  List<TaskGroupsDataClass> listTaskGroups = [];
+
+  static Color hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) {
+      hex = 'FF$hex'; // Add full opacity if only RGB is provided
+    }
+    int a = int.parse(hex.substring(0, 2), radix: 16);
+    int r = int.parse(hex.substring(2, 4), radix: 16);
+    int g = int.parse(hex.substring(4, 6), radix: 16);
+    int b = int.parse(hex.substring(6, 8), radix: 16);
+    return Color.fromRGBO(r, g, b, a / 255.0);
+  }
+
   Widget taskGroupSelectWidget(double width){
     if(dataGet == true){
-      if(taskGroupsList.isEmpty){
+      if(listTaskGroups.isEmpty){
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Text(
@@ -63,59 +76,202 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
         return DropdownButtonFormField2<TaskGroupsDataClass>(
           isExpanded: true,
           decoration: InputDecoration(
-            // Add Horizontal padding using menuItemStyleData.padding so it matches
-            // the menu padding when button's width is not specified.
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            // Add more decoration..
+              enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: colors.errorTextFormFieldColor),
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: colors.errorTextFormFieldColor),
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              contentPadding: const EdgeInsets.only(left: 24, right: 18, top: 20, bottom: 20),
+              fillColor: Colors.white,
+              filled: true,
+              errorStyle: TextStyle(
+                  fontSize: 12,
+                  color: colors.errorTextFormFieldColor
+              ),
+              errorMaxLines: 1,
           ),
-          hint: const Text(
-            'Select task group',
-            style: TextStyle(fontSize: 14),
+          hint: Text(
+            AppLocalizations.of(context)!.select_task_group_string,
+            style: TextStyle(fontSize: 16),
           ),
-          items: taskGroupsList
-              .map((item) => DropdownMenuItem<TaskGroupsDataClass>(
+          items: listTaskGroups.map((item) => DropdownMenuItem<TaskGroupsDataClass>(
             value: item,
-            child: Text(
-              item.name!,
-              style: const TextStyle(
-                fontSize: 14,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 5), 
+              child: Container(
+              width: width,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          color: hexToColor(item.backgroundColor!),
+                          borderRadius: BorderRadius.circular(13)
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: FaIcon(IconData(
+                          item.iconData!,
+                          fontFamily: 'FontAwesomeSolid',
+                          fontPackage: 'font_awesome_flutter',
+                        ), color: hexToColor(item.iconColor!), size: 28,),
+                      ),
+                    ),
+                    const SizedBox(width: 20,),
+                    Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name!, overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.roboto(textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 22,
+                                  letterSpacing: 0.01,
+                                  decoration: TextDecoration.none
+                              )),
+                            ),
+                            const SizedBox(height: 5,),
+                            Text(
+                              item.description!, overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.roboto(textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16,
+                                  letterSpacing: 0.01,
+                                  decoration: TextDecoration.none
+                              )),
+                            ),
+                          ],
+                        )
+                    ),
+                  ],
+                ),
               ),
             ),
-          ))
-              .toList(),
+            ),
+          )).toList(),
           validator: (value) {
             if (value == null) {
-              return 'Please select gender.';
+              return AppLocalizations.of(context)!.select_task_group_string;
             }
             return null;
           },
           onChanged: (value) {
-            //Do something when selected item is changed.
+            setState(() {
+              selectedTaskGroup = value;
+            });
+            formCreateTask.currentState!.validate();
           },
           onSaved: (value) {
             selectedTaskGroup = value;
           },
           buttonStyleData: const ButtonStyleData(
+            height: 55,
             padding: EdgeInsets.only(right: 8),
           ),
           iconStyleData: const IconStyleData(
             icon: Icon(
-              Icons.arrow_drop_down,
-              color: Colors.black45,
+              FontAwesomeIcons.chevronDown,
+              color: Colors.black,
+              size: 16,
             ),
             iconSize: 24,
           ),
           dropdownStyleData: DropdownStyleData(
+            useRootNavigator: true,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
           menuItemStyleData: const MenuItemStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 100,
+            padding: EdgeInsets.symmetric(horizontal: 5),
           ),
+          selectedItemBuilder: (BuildContext context){
+            return listTaskGroups.map((item) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: hexToColor(item.backgroundColor!),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: FaIcon(
+                        IconData(
+                          item.iconData!,
+                          fontFamily: 'FontAwesomeSolid',
+                          fontPackage: 'font_awesome_flutter',
+                        ),
+                        color: hexToColor(item.iconColor!),
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name!,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          item.description!,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }).toList();
+          },
         );
       }
     }
@@ -126,7 +282,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
         borderRadius: BorderRadius.circular(15),
       );
     }
-
   }
 
   Widget taskTitleWidget(double width){
@@ -378,7 +533,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
         child: ElevatedButton(
             onPressed: () async{
               if(formCreateTask.currentState!.validate()){
-                print("create task");
+                await createTask();
               }
             },
             style: ButtonStyle(
@@ -389,7 +544,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
                 ),
                 backgroundColor: (titleController.text.isNotEmpty
                     && descriptionController.text.isNotEmpty
-                    && selectedTaskGroupBool == true)?
+                    && selectedTaskGroup != null)?
                 WidgetStateProperty.all<Color>(colors.mainColor)
                     :
                 WidgetStateProperty.all<Color>(colors.palete8)
@@ -540,7 +695,8 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
               Expanded(
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.dateAndTime,
-                  minimumDate: (startDate == null)? DateTime.now() : startDate,
+                  initialDateTime: (startDate == null)? DateTime.now() : startDate!.add(Duration(minutes: 1)),
+                  minimumDate: (startDate == null)? DateTime.now() : startDate!.add(Duration(minutes: 1)),
                   onDateTimeChanged: (DateTime dateTime) {
                     endDate = dateTime;
                   },
@@ -615,17 +771,102 @@ class CreateTaskScreenState extends State<CreateTaskScreen>{
     return monthsGenitive[month - 1]; // month is 1-based
   }
 
-  Future<void> getTaskGroups() async{
-
+  Future<void> getTasksGroups() async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.responseType = ResponseType.plain;
+    //set Dio response =>
+    try{
+      final response = await dio.get(endpoints.allTaskGroupsGetEndpoint);
+      print("Tasks groups data : $response");
+      if(response.statusCode == 200){
+        final result = taskGroupsDataClassFromJson(response.toString());
+        listTaskGroups = result;
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> initVoid() async{
-    await getTaskGroups();
-    Future.delayed(Duration(seconds: 3), (){
-      setState(() {
-        dataGet = true;
-      });
+    await getTasksGroups();
+    setState(() {
+      dataGet = true;
     });
+  }
+
+  String formatTimeZoneOffset(Duration offset) {
+    final hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    final sign = offset.isNegative ? '-' : '+';
+    return '$sign$hours:$minutes';
+  }
+
+  Future<void> createTask() async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.responseType = ResponseType.plain;
+    //set Dio response =>
+    try{
+      final response = await dio.post(
+          endpoints.createTaskPostEndpoint,
+          data: {
+            "title": titleController.text,
+            "description": descriptionController.text,
+            "task_group_id": selectedTaskGroup!.id,
+            "start_date": startDate == null ? null : "${startDate!.toIso8601String()}${formatTimeZoneOffset(startDate!.timeZoneOffset)}",
+            "finish_date": endDate == null ? null : "${endDate!.toIso8601String()}${formatTimeZoneOffset(endDate!.timeZoneOffset)}",
+            "status": "TODO"
+          }
+      );
+      print("Tasks groups data : $response");
+      if(response.statusCode == 201){
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.task_created_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        );
+        Navigator.of(context).pop();
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   @override

@@ -85,17 +85,24 @@ class NotesScreenState extends State<NotesScreen>{
     }
     else{
       if(list.isEmpty){
-        return Center(
-          child: Text(
-            AppLocalizations.of(context)!.notes_list_empty_string,
-            style: GoogleFonts.roboto(textStyle: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 24,
-                letterSpacing: 0.01,
-                decoration: TextDecoration.none
-            )),
-          )
+        return Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: SizedBox(
+              width: width,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  AppLocalizations.of(context)!.notes_list_empty_string,
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 24,
+                      letterSpacing: 0.01,
+                      decoration: TextDecoration.none
+                  )),
+                ),
+              ),
+            ),
         );
       }
       else{
@@ -127,6 +134,8 @@ class NotesScreenState extends State<NotesScreen>{
                             children: [
                               Text(
                                 list[index].title!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.roboto(textStyle: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600,
@@ -138,6 +147,8 @@ class NotesScreenState extends State<NotesScreen>{
                               const SizedBox(height: 5,),
                               Text(
                                 list[index].description!,
+                                maxLines: 5,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.roboto(textStyle: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w300,
@@ -188,8 +199,8 @@ class NotesScreenState extends State<NotesScreen>{
           Fluttertoast.showToast(
             msg: AppLocalizations.of(context)!.cant_get_data,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -228,47 +239,52 @@ class NotesScreenState extends State<NotesScreen>{
             color: colors.scaffoldColor,
             child: Padding(
               padding: EdgeInsets.only(top: statusBarHeight),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.zero,
-                physics: BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 15,),
-                      Row(
+              child: RefreshIndicator(
+                onRefresh: () async{
+                  await getNotes();
+                },
+                child: SingleChildScrollView(
+                    padding: EdgeInsets.zero,
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.notes_string,
-                            style: GoogleFonts.roboto(textStyle: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 28,
-                                letterSpacing: 0.01,
-                                decoration: TextDecoration.none
-                            )),
+                          const SizedBox(height: 15,),
+                          Row(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.notes_string,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 28,
+                                    letterSpacing: 0.01,
+                                    decoration: TextDecoration.none
+                                )),
+                              ),
+                              const SizedBox(width: 10,),
+                              GestureDetector(
+                                onTap: (){
+                                  createNewTask();
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: colors.mainColor,
+                                  radius: 16,
+                                  child: FaIcon(FontAwesomeIcons.plus , color: Colors.white, size: 18,),
+                                ),
+                              )
+                            ],
                           ),
-                          const SizedBox(width: 10,),
-                          GestureDetector(
-                            onTap: (){
-                              createNewTask();
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: colors.mainColor,
-                              radius: 16,
-                              child: FaIcon(FontAwesomeIcons.plus , color: Colors.white, size: 18,),
-                            ),
-                          )
+                          const SizedBox(height: 10,),
+                          notesList(width),
+                          SizedBox(height: bottomNavBarHeight+40,)
                         ],
                       ),
-                      const SizedBox(height: 10,),
-                      notesList(width),
-                      SizedBox(height: bottomNavBarHeight+40,)
-                    ],
+                    ),
                   ),
-                ),
               ),
             )
         )

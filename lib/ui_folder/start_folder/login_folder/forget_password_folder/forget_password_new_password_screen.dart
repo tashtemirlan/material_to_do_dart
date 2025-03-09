@@ -180,8 +180,8 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
           Fluttertoast.showToast(
             msg: toParseData,
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-            backgroundColor: Colors.white, // Background color of the toast
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
             textColor: Colors.black,
           );
         }
@@ -274,8 +274,8 @@ class ForgetPasswordNewPasswordScreenState extends State<ForgetPasswordNewPasswo
                                           Fluttertoast.showToast(
                                             msg: AppLocalizations.of(context)!.passwords_not_match,
                                             toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-                                            backgroundColor: Colors.white, // Background color of the toast
+                                            gravity: ToastGravity.BOTTOM,
+                                            backgroundColor: Colors.white,
                                             textColor: Colors.black,
                                           );
                                         }

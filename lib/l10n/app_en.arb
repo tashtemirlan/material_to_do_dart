@@ -74,7 +74,7 @@
   "today_tasks_string" : "Today's tasks",
   "pick_date_string" : "Pick date",
 
-  "tasks_list_empty" : "No any task \uD83D\uDE01",
+  "tasks_list_empty" : "No any task \uD83E\uDD73",
   "all_string" : "All",
   "to_do_string" : "To do",
   "in_progress_string" : "In Progress",
@@ -100,6 +100,10 @@
 
   "update_task_string" : "Update task",
   "delete_task_string" : "Delete task",
+  "edit_task_string" : "Edit task",
+  "task_created_string" : "Task created!",
+  "task_updated_string" : "Task updated!",
+  "task_deleted_string" : "Task deleted!",
   "accept_delete_task_string" : "Are you sure? Deleted task can't be restored.",
 
   "create_task_group_string" : "Create task group",
@@ -113,5 +117,15 @@
   "icon_color_string" : "Icon color",
   "background_color_string" : "Background color",
   "icon_string" : "Icon",
-  "pick_color_string" : "Pick color"
+  "pick_color_string" : "Pick color",
+  "no_any_task_group_string" : "No any task group\nLet's create one \uD83D\uDE0A!",
+  "tasks_string" : "Tasks",
+  "view_task_string" : "View tasks",
+  "zero_stage_string" : "Let's start!\nTasks are waiting!",
+  "first_stage_string" : "You've made a start!\nKeep going!",
+  "second_stage_string" : "Halfway there!\nYou're doing great!",
+  "third_stage_string" : "Almost there!\nYou're almost done!",
+  "fourth_stage_string" : "Congratulations!\nYou've completed all tasks!",
+  "welcome_string" : "Welcome!",
+  "select_task_group_string" : "Select task group"
 }

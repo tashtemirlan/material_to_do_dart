@@ -429,6 +429,30 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
     );
   }
 
+  // Convert a Color to Hex string
+  static String colorToHex(Color color) {
+    int r = (color.r * 255).toInt();
+    int g = (color.g * 255).toInt();
+    int b = (color.b * 255).toInt();
+    int a = (color.a * 255).toInt();
+
+    return '#${a.toRadixString(16).padLeft(2, '0')}${r.toRadixString(16).padLeft(2, '0')}${g.toRadixString(16).padLeft(2, '0')}${b.toRadixString(16).padLeft(2, '0')}'.toUpperCase();
+  }
+
+  // Convert a Hex string to Color
+  static Color hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) {
+      hex = 'FF$hex'; // Add full opacity if only RGB is provided
+    }
+    int a = int.parse(hex.substring(0, 2), radix: 16);
+    int r = int.parse(hex.substring(2, 4), radix: 16);
+    int g = int.parse(hex.substring(4, 6), radix: 16);
+    int b = int.parse(hex.substring(6, 8), radix: 16);
+    return Color.fromRGBO(r, g, b, a / 255.0);
+  }
+
+
   Future<void> getNoteData() async{
     textTitleController.text = "Title";
     textDescriptionController.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -463,6 +487,7 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
     if(formTaskGroup.currentState!.validate()){
       if(widget.creation == true){
         await createTaskGroup();
+        Navigator.pop(context, "update");
       }
       else{
         await updateTaskGroup();
@@ -471,21 +496,57 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
   }
 
   Future<void> createTaskGroup() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.task_group_created_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.post(
+          endpoints.createTaskGroupPostEndpoint,
+          data: {
+            "name" : textTitleController.text,
+            "description" : textDescriptionController.text,
+            "icon_data" : selectedIcon.codePoint,
+            "background_color" : colorToHex(backgroundColor),
+            "icon_color" : colorToHex(selectedIconColor)
+          }
+      );
+      if(response.statusCode == 201){
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.task_group_created_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> updateTaskGroup() async{
     Fluttertoast.showToast(
       msg: AppLocalizations.of(context)!.task_group_updated_string,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.white,
       textColor: Colors.black,
     );
   }
@@ -494,8 +555,8 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
     Fluttertoast.showToast(
       msg: AppLocalizations.of(context)!.task_group_deleted_string,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM, // Position of the toast on the screen
-      backgroundColor: Colors.white, // Background color of the toast
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.white,
       textColor: Colors.black,
     );
   }

@@ -12,8 +12,6 @@ import 'package:insta_image_viewer/insta_image_viewer.dart';
 import '../skeleton_folder/skeleton.dart';
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 
-
-
 class UserChangeAvatarBottomSheet extends StatefulWidget {
   final String imagePath;
   const UserChangeAvatarBottomSheet({super.key, required this.imagePath});

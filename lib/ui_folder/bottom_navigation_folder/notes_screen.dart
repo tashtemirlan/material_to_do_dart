@@ -14,8 +14,6 @@ import 'package:material_to_do/ui_folder/notes_folder/note_page.dart';
 import '../../data_class_folder/notes_folder/notes_data_class.dart';
 import '../../global_folder/globals.dart';
 import '../skeleton_folder/skeleton.dart';
-import 'create_task_screen.dart';
-
 
 class NotesScreen extends StatefulWidget {
   const NotesScreen({super.key});

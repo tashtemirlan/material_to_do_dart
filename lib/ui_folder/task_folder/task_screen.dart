@@ -193,7 +193,7 @@ class ViewTaskScreenState extends State<ViewTaskScreen>{
             selectedTaskGroup = value;
           },
           buttonStyleData: const ButtonStyleData(
-            height: 55,
+            height: 65,
             padding: EdgeInsets.only(right: 8),
           ),
           iconStyleData: const IconStyleData(
@@ -211,7 +211,7 @@ class ViewTaskScreenState extends State<ViewTaskScreen>{
             ),
           ),
           menuItemStyleData: const MenuItemStyleData(
-            height: 100,
+            height: 110,
             padding: EdgeInsets.symmetric(horizontal: 5),
           ),
           selectedItemBuilder: (BuildContext context){

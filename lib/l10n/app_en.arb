@@ -127,5 +127,6 @@
   "third_stage_string" : "Almost there!\nYou're almost done!",
   "fourth_stage_string" : "Congratulations!\nYou've completed all tasks!",
   "welcome_string" : "Welcome!",
-  "select_task_group_string" : "Select task group"
+  "select_task_group_string" : "Select task group",
+  "tasks_all_string" : "Tasks"
 }

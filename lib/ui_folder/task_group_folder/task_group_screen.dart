@@ -10,9 +10,8 @@ import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../data_class_folder/notes_folder/notes_data_class.dart';
+import '../../data_class_folder/task_group_folder/task_group_data_class.dart';
 import '../../global_folder/globals.dart';
-import '../skeleton_folder/skeleton.dart';
 
 
 class TaskGroupScreen extends StatefulWidget {
@@ -39,6 +38,9 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
   Color backgroundColor = colors.palete1;
   IconData selectedIcon = FontAwesomeIcons.flutter;
 
+  TaskGroupDataClass? ts;
+
+  bool taskGroupHasBeenUpdated = false;
 
   Widget taskGroupTitleWidget(double width){
     return SizedBox(
@@ -452,42 +454,60 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
     return Color.fromRGBO(r, g, b, a / 255.0);
   }
 
-
-  Future<void> getNoteData() async{
-    textTitleController.text = "Title";
-    textDescriptionController.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-    textDescriptionBool = true;
-    textTitleBool = true;
-
-    //todo : we must save data to our server like :
-    //${icon.codePoint} - to get int of our selected icon
-    // to get icon from server we need to use for example:
-    //IconData myIcon = IconData(
-    //  61817,  // codePoint you saved
-    //  fontFamily: 'FontAwesomeSolid',  // Very important for FontAwesome
-    //  fontPackage: 'font_awesome_flutter', // Required for FontAwesome
-    //);
-
-    //void saveIcon(IconData icon) {
-    //  int codePoint = icon.codePoint;
-    //  // Save `codePoint` to DB
-    //}
-
-    //IconData loadIcon(int codePoint) {
-    //  return IconData(
-    //    codePoint,
-    //    fontFamily: 'FontAwesomeSolid',
-    //    fontPackage: 'font_awesome_flutter',
-    //  );
-    //}
-
+  Future<void> getTaskGroupData() async{
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.responseType = ResponseType.plain;
+    //set Dio response =>
+    try{
+      final response = await dio.get("${endpoints.taskGroupGetEndpoint}${widget.id}");
+      print("Response for task_group with group id : ${widget.id}:\n $response");
+      if(response.statusCode == 200){
+        if(response.data == "null"){}
+        else{
+          //Same answer as for to do type so we use same parser
+          final result = taskGroupDataClassFromJson(response.toString());
+          ts = result;
+          textTitleController.text = result.name!;
+          textDescriptionController.text = result.description!;
+          selectedIconColor = hexToColor(result.iconColor!);
+          backgroundColor = hexToColor(result.backgroundColor!);
+          selectedIcon = IconData(
+            result.iconData!,
+            fontFamily: 'FontAwesomeSolid',
+            fontPackage: 'font_awesome_flutter',
+          );
+          textDescriptionBool = true;
+          textTitleBool = true;
+        }
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> saveTaskGroup() async{
     if(formTaskGroup.currentState!.validate()){
       if(widget.creation == true){
         await createTaskGroup();
-        Navigator.pop(context, "update");
+        Navigator.pop(context, "Update");
       }
       else{
         await updateTaskGroup();
@@ -542,23 +562,89 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
   }
 
   Future<void> updateTaskGroup() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.task_group_updated_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.white,
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.put(
+          "${endpoints.updateTaskGroupPutEndpoint}${widget.id}",
+          data: {
+            "name" : textTitleController.text,
+            "description" : textDescriptionController.text,
+            "icon_data" : selectedIcon.codePoint,
+            "background_color" : colorToHex(backgroundColor),
+            "icon_color" : colorToHex(selectedIconColor)
+          }
+      );
+      if(response.statusCode == 200){
+        taskGroupHasBeenUpdated= true;
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.task_group_updated_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   Future<void> deleteTaskGroup() async{
-    Fluttertoast.showToast(
-      msg: AppLocalizations.of(context)!.task_group_deleted_string,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.white,
-      textColor: Colors.black,
-    );
+    final dio = Dio();
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    dio.options.connectTimeout = Duration(seconds: 30);
+    var box = await Hive.openBox("auth");
+    final token = box.get("token");
+    dio.options.headers['Authorization'] = "Bearer $token";
+    //set Dio response =>
+    try{
+      final response = await dio.delete(
+          "${endpoints.deleteTaskGroupDeleteEndpoint}${widget.id}",
+      );
+      if(response.statusCode == 200){
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.task_group_deleted_string,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        );
+      }
+    }
+    catch(error){
+      if(error is DioException){
+        if (error.response != null) {
+          String toParseData = error.response.toString();
+          print(toParseData);
+          Fluttertoast.showToast(
+            msg: AppLocalizations.of(context)!.cant_get_data,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+          );
+        }
+      }
+    }
   }
 
   void deleteAlertDialog(){
@@ -608,7 +694,7 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
                       onPressed: () async{
                         await deleteTaskGroup();
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context, "Update");
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -631,7 +717,7 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
 
   Future<void> initVoid() async{
     if(widget.creation == false){
-      await getNoteData();
+      await getTaskGroupData();
     }
     setState(() {
       dataGet = true;
@@ -678,7 +764,12 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
                             children: [
                               GestureDetector(
                                 onTap: () async{
-                                  Navigator.of(context).pop();
+                                  if(taskGroupHasBeenUpdated){
+                                    Navigator.pop(context, "updating");
+                                  }
+                                  else{
+                                    Navigator.of(context).pop();
+                                  }
                                 },
                                 child: FaIcon(FontAwesomeIcons.arrowLeft, color: colors.darkBlack, size: 28,),
                               ),
@@ -692,7 +783,12 @@ class TaskGroupScreenState extends State<TaskGroupScreen>{
                               const SizedBox(width: 20,),
                               GestureDetector(
                                 onTap: (){
-                                  deleteAlertDialog();
+                                  if(widget.id!=null){
+                                    deleteAlertDialog();
+                                  }
+                                  else{
+                                    Navigator.pop(context, "Update");
+                                  }
                                 },
                                 child: FaIcon(FontAwesomeIcons.trashCan, color: colors.errorTextFormFieldColor, size: 28,),
                               ),

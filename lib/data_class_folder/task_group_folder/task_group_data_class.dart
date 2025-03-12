@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final taskGroupDataClass = taskGroupDataClassFromJson(jsonString);
+
 import 'dart:convert';
 
 TaskGroupDataClass taskGroupDataClassFromJson(String str) => TaskGroupDataClass.fromJson(json.decode(str));
@@ -10,6 +14,7 @@ class TaskGroupDataClass {
   DateTime? updatedAt;
   DateTime? deletedAt;
   String? name;
+  String? description;
   int? iconData;
   String? backgroundColor;
   String? iconColor;
@@ -21,6 +26,7 @@ class TaskGroupDataClass {
     this.updatedAt,
     this.deletedAt,
     this.name,
+    this.description,
     this.iconData,
     this.backgroundColor,
     this.iconColor,
@@ -33,6 +39,7 @@ class TaskGroupDataClass {
     updatedAt: json["UpdatedAt"] == null ? null : DateTime.parse(json["UpdatedAt"]),
     deletedAt: json["DeletedAt"] == null ? null : DateTime.parse(json["DeletedAt"]),
     name: json["name"],
+    description: json["description"],
     iconData: json["icon_data"],
     backgroundColor: json["background_color"],
     iconColor: json["icon_color"],
@@ -45,6 +52,7 @@ class TaskGroupDataClass {
     "UpdatedAt": updatedAt?.toIso8601String(),
     "DeletedAt": deletedAt?.toIso8601String(),
     "name": name,
+    "description": description,
     "icon_data": iconData,
     "background_color": backgroundColor,
     "icon_color": iconColor,

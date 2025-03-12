@@ -11,8 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data_class_folder/notes_folder/note_data_class.dart';
 import '../../global_folder/globals.dart';
-import '../skeleton_folder/skeleton.dart';
-
 
 class NoteScreen extends StatefulWidget {
   final int? id;
@@ -477,7 +475,12 @@ class NoteScreenState extends State<NoteScreen>{
                             const SizedBox(width: 20,),
                             GestureDetector(
                               onTap: (){
-                                deleteAlertDialog();
+                                if(widget.id!=null){
+                                  deleteAlertDialog();
+                                }
+                                else{
+                                  Navigator.pop(context, "Update");
+                                }
                               },
                               child: FaIcon(FontAwesomeIcons.trashCan, color: colors.errorTextFormFieldColor, size: 28,),
                             ),

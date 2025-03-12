@@ -13,6 +13,7 @@ import 'package:material_to_do/global_folder/endpoints.dart' as endpoints;
 import 'package:material_to_do/global_folder/colors.dart' as colors;
 import 'package:material_to_do/ui_folder/skeleton_folder/skeleton.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:material_to_do/ui_folder/task_group_folder/task_group_detail_screen.dart';
 
 import '../../data_class_folder/task_group_folder/task_groups_data_class.dart';
 import '../../data_class_folder/tasks_folder/date_tasks_data_class.dart';
@@ -435,7 +436,7 @@ class HomeScreenState extends State<HomeScreen>{
                         style: GoogleFonts.roboto(textStyle: TextStyle(
                             color: colors.secondHelpColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 22,
+                            fontSize: 18,
                             letterSpacing: 0.01,
                             decoration: TextDecoration.none
                         )),
@@ -815,8 +816,12 @@ class HomeScreenState extends State<HomeScreen>{
                     fontPackage: 'font_awesome_flutter',
                 );
                 return GestureDetector(
-                  onTap: (){
-                      print("view group");
+                  onTap: () async{
+                    final result = await Navigator.of(context).push(
+                        CupertinoPageRoute(builder: (BuildContext context) => TaskGroupDetailScreen(id: listTaskGroups[index].id!)));
+                    if(result!=null){
+                      await update();
+                    }
                   },
                   child: Padding(
                     padding: (index==0)? EdgeInsets.zero : const EdgeInsets.only(top: 10),
@@ -909,7 +914,7 @@ class HomeScreenState extends State<HomeScreen>{
                                       style: GoogleFonts.roboto(textStyle: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 22,
+                                          fontSize: 18,
                                           letterSpacing: 0.01,
                                           decoration: TextDecoration.none
                                       )),

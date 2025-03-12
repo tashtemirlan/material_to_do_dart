@@ -1,4 +1,4 @@
-String mainPath = "localhost:2525";
+String mainPath = "http://localhost:2525";
 
 /**
  * just standart commit
@@ -54,3 +54,4 @@ String deleteTaskDeleteEndpoint = "$mainPath/api/tasks/deleteTask/";
 String toDOTasksGroupGetEndpoint = "$mainPath/api/tasks/getTasks/todo";
 String inProgressTasksGroupGetEndpoint = "$mainPath/api/tasks/getTasks/in_progress";
 String taskByDateGetEndpoint = "$mainPath/api/tasks/getTask/finish-date";
+String tasksByGroupIdGetEndpoint = "$mainPath/api/tasks/getTaskByGroupId/";

@@ -126,5 +126,6 @@
   "third_stage_string" : "Почти готово!\nВы почти закончили! ",
   "fourth_stage_string" : "Поздравляем!\nВы выполнили все задания! ",
   "welcome_string" : "Здравствуйте!",
-  "select_task_group_string" : "Выберите группу задач"
+  "select_task_group_string" : "Выберите группу задач",
+  "tasks_all_string" : "Задачи"
 }
